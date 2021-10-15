@@ -1,9 +1,11 @@
 package com.shocker;
 
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+import com.shocker.shocker.World;
+
+import java.awt.*;
+
+public class App {
+    public static void main(String[] args) {
+        World w = new World(new Dimension(200, 200));
     }
 }
