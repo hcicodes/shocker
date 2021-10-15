@@ -24,4 +24,20 @@ public class Position {
     public void setX(int x) {
         this.x = x;
     }
+
+    public void moveLeft(int jump) {
+        this.x -= jump;
+    }
+
+    public void moveRight(int jump) {
+        this.x += jump;
+    }
+
+    public void moveUp(int jump) {
+        this.y += jump;
+    }
+
+    public void moveDown(int jump) {
+        this.y -= jump;
+    }
 }

@@ -1,11 +1,11 @@
 package com.shocker.entity.player;
 
+import com.shocker.common.models.Dimension;
+import com.shocker.common.models.Position;
 import com.shocker.entity.Entity;
 
-import java.awt.*;
-
 public class BasicPlayer extends Entity implements Player {
-    public BasicPlayer(Rectangle r) {
-        super(r);
+    public BasicPlayer(Position position, Dimension dimension) {
+        super(position, dimension);
     }
 }

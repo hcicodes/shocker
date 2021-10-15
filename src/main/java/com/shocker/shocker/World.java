@@ -1,7 +1,8 @@
 package com.shocker.shocker;
 
-import java.awt.*;
+import com.shocker.common.models.Dimension;
 
+import java.awt.*;
 
 public class World extends Frame {
 

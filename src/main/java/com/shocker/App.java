@@ -1,8 +1,7 @@
 package com.shocker;
 
+import com.shocker.common.models.Dimension;
 import com.shocker.shocker.World;
-
-import java.awt.*;
 
 public class App {
     public static void main(String[] args) {
