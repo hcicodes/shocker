@@ -151,8 +151,8 @@ package com.shocker.SKF; /* package name */
         /* a magnitude of a vector is  */
         /* basically just like finding */
         /* the hypotenuse              */
-        float  sqrX = (float)Math.pow(x, 2);
-        float  sqrY = (float)Math.pow(y, 2);
+        float  sqrX = (float)Math.pow(x, 2f);
+        float  sqrY = (float)Math.pow(y, 2f);
         double fMag = Math.sqrt(sqrX + sqrY);
         return (float)fMag;
     }
@@ -178,7 +178,7 @@ package com.shocker.SKF; /* package name */
      * PARAMS:
      *  N/A
      * RETURNS:
-     *  an integer array, index 0 is x, index 1
+     *  an float array, index 0 is x, index 1
      * is y
      *****************************************/
     public float[] toFloats( )
@@ -190,5 +190,25 @@ package com.shocker.SKF; /* package name */
         iArr[0] = x;
         iArr[1] = y;
         return iArr;
+    }
+
+    /******************************************
+     * METHOD: distanceTo
+     * PARAMS:
+     *  SKFVector dVec -> compare vect
+     * RETURNS:
+     *  the distance to another vector
+     *****************************************/
+    public float distanceTo(SKFVector dVec)
+    {
+        /* get difference in position */
+        float dx = Math.abs(x - dVec.x);
+        float dy = Math.abs(y - dVec.y);
+
+        /* make into new vector and get distance */
+        SKFVector tVec = new SKFVector(dx, dy);
+
+        return tVec.getMagnitude( );
+
     }
 }
