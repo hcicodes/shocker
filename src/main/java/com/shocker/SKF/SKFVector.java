@@ -18,7 +18,7 @@
  *  - Public Methods
  *********************************************************/
 
- package SKF; /* package name */
+package com.shocker.SKF; /* package name */
 
  public final class SKFVector {
 
@@ -26,8 +26,8 @@
     private static final int DIMCOUNT = 2;
 
     /* x and y position */
-    public int x;
-    public int y;
+    public float x;
+    public float y;
 
     /******************************************
      * METHOD: SKFVector
@@ -46,12 +46,12 @@
     /******************************************
      * METHOD: SKFVector
      * PARAMS:
-     *  int X -> x pos
-     *  int Y -> y pos
+     *  float X -> x pos
+     *  float Y -> y pos
      * RETURNS:
      *  N/A
     *****************************************/
-    public SKFVector(int X, int Y)
+    public SKFVector(float X, float Y)
     {
         x = X;
         y = Y;
@@ -60,12 +60,12 @@
     /******************************************
      * METHOD: set
      * PARAMS:
-     *  int X -> x pos to set
-     *  int Y -> y pos to set
+     *  float X -> x pos to set
+     *  float Y -> y pos to set
      * RETURNS:
      *  void
      *****************************************/
-    public void set(int X, int Y)
+    public void set(float X, float Y)
     {
         x = X;
         y = Y;
@@ -74,12 +74,12 @@
     /******************************************
      * METHOD: add
      * PARAMS:
-     *  int X -> x pos to add to x member
-     *  int Y -> y pos to add to y member
+     *  float X -> x pos to add to x member
+     *  float Y -> y pos to add to y member
      * RETURNS:
      *  void
      *****************************************/
-    public void add(int X, int Y)
+    public void add(float X, float Y)
     {
         x += X;
         y += Y;
@@ -101,12 +101,12 @@
     /******************************************
      * METHOD: add
      * PARAMS:
-     *  int X -> x pos to add to x member
-     *  int Y -> y pos to add to y member
+     *  float X -> x pos to add to x member
+     *  float Y -> y pos to add to y member
      * RETURNS:
      *  void
      *****************************************/
-    public void subtract(int X, int Y)
+    public void subtract(float X, float Y)
     {
         x -= X;
         y -= Y;
@@ -174,17 +174,17 @@
     }
 
     /******************************************
-     * METHOD: toInts
+     * METHOD: toFloats
      * PARAMS:
      *  N/A
      * RETURNS:
      *  an integer array, index 0 is x, index 1
      * is y
      *****************************************/
-    public int[] toInts( )
+    public float[] toFloats( )
     {
         /* NOO! HEAP ALLOCATION IS MAKING ME CRY */
-        int[] iArr = new int[DIMCOUNT];
+        float[] iArr = new float[DIMCOUNT];
 
         /* set indexes and return */
         iArr[0] = x;
