@@ -3,6 +3,7 @@
  *  SKFInput.java
  * DATE:
  *  2021-10-18
+ *  2021-10-19
  * DEV:
  *  Bailey Jia-Tao Brown
  * DESC:
@@ -37,10 +38,16 @@
     public SKFInput( )
     {
         currentKeysDown = new int[MAXKEYS];
-        currentChars = new char[MAXKEYS];
+        currentChars    = new char[MAXKEYS];
     }
 
-    /* get input axis */
+    /******************************************
+     * METHOD: getInputAxis
+     * PARAMS:
+     *  N/A
+     * RETURNS:
+     *  SKFVector based on arrow keys/wasd
+    *****************************************/
     public static SKFVector getInputAxis( )
     {
         
@@ -57,7 +64,13 @@
         return rv;
     }
 
-    /* check for key down */
+    /******************************************
+     * METHOD: isKeyDown
+     * PARAMS:
+     *  int keyCode -> VK code to check
+     * RETURNS:
+     *  true or false based on key down
+    *****************************************/
     public static boolean isKeyDown(int keyCode)
     {
         /* loop and find matching */
@@ -72,7 +85,13 @@
         return false;
     }
 
-    /* check for key down */
+    /******************************************
+     * METHOD: isKeyDown
+     * PARAMS:
+     *  char charNum -> char to check if down
+     * RETURNS:
+     *  true or false based on key down
+    *****************************************/
     public static boolean isKeyDown(char charNum)
     {
         /* loop and find matching */
@@ -107,11 +126,13 @@
         /* find free space in ckd */
         for(int i = 0; i < MAXKEYS; i++)
         {
+            /* check if matching (key already down!) */
             if(currentKeysDown[i] == scannedKeyCode)
             {
                 break;
             }
 
+            /* free space */
             if(currentKeysDown[i] == 0)
             {
                 currentKeysDown[i] = scannedKeyCode;
@@ -122,11 +143,13 @@
         /* find free space in cc */
         for(int i = 0; i < MAXKEYS; i++)
         {
+            /* check if matching (key already down!) */
             if(currentChars[i] == scannedChar)
             {
                 break;
             }
 
+            /* fill empty space */
             if(currentChars[i] == 0)
             {
                 currentChars[i] = scannedChar;
@@ -143,7 +166,7 @@
     public void keyReleased(KeyEvent event)
     {
         /* get keys up */
-        int getKeyUp = event.getKeyCode( );
+        int getKeyUp  = event.getKeyCode( );
         int getCharUp = event.getKeyChar( );
 
         /* loop and find match */

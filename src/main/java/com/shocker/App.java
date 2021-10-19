@@ -45,6 +45,8 @@ public class App {
             /* UPDATE PHYSICS */
             eh.update( );
 
+            //SKFInput.printKeysDown( );
+
             /* clear window */
             win.clearBuffer( );
 
