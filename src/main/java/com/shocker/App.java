@@ -12,7 +12,7 @@ public class App {
 
         /* set entity params */
         tent.velocity.set(0.5f, 0.1f);
-        tent.drag = 0.1f;
+        tent.drag = 0.3f;
 
         /* create entity handler object */
         SKEntityHandler eh = new SKEntityHandler( );

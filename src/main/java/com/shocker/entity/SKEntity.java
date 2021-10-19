@@ -93,6 +93,45 @@
     }
 
     /******************************************
+     * METHOD: init
+     * PARAMS:
+     *  int x -> x pos
+     *  int y -> y pos
+     *  int flags -> entity render type
+     *  int layer -> layer
+     *  SKFRenderSet rs -> renderset (can be null)
+     *  SKFTexture tx -> texture (can be null)
+     * RETURNS:
+     *  void
+    *****************************************/
+    public void init(int x, int y, int flags, int layer, SKFRenderSet rs, SKFTexture tx)
+    {
+        /* set isOnStart to true, so that onStart callback can execute */
+        isOnStart = true;
+
+        /* setup PHYSICS vars */
+        position = new SKFVector(x, y);
+        velocity = new SKFVector( );
+        colliderRadius = 0f;
+        drag = 0f;
+
+        /* setup RENDER vars */
+        renderFlags = flags;
+        
+        if (rs != null)
+        {
+            renderSet = rs;
+        }
+        if (tx != null)
+        {
+            texture = tx;
+        }
+
+        renderLayer = layer;
+        isVisible   = true;
+    }
+
+    /******************************************
      * METHOD: update
      * PARAMS:
      *  N/A
