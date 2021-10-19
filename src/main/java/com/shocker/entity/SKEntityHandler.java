@@ -246,6 +246,9 @@
                         tempEntity.onStart();
                         tempEntity.isOnStart = false;
                     }
+
+                    /* UPDATE TEMP ENTITY */
+                    tempEntity.update( );
     
                     /* update positon */
                     tempEntity.position.add(tempEntity.velocity);

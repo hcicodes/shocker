@@ -55,10 +55,10 @@
         SKFVector rv = new SKFVector( );
 
         /* check WASD */
-        if(isKeyDown('w') || isKeyDown(KeyEvent.VK_UP))    rv.add(0,  1);
-        if(isKeyDown('s') || isKeyDown(KeyEvent.VK_DOWN))  rv.add(0, -1);
-        if(isKeyDown('a') || isKeyDown(KeyEvent.VK_LEFT))  rv.add(-1, 0);
-        if(isKeyDown('d') || isKeyDown(KeyEvent.VK_RIGHT)) rv.add( 1, 0);
+        if(isKeyDown('w') || isKeyDown('W') || isKeyDown(KeyEvent.VK_UP))    rv.add(0,  1);
+        if(isKeyDown('s') || isKeyDown('A') || isKeyDown(KeyEvent.VK_DOWN))  rv.add(0, -1);
+        if(isKeyDown('a') || isKeyDown('S') || isKeyDown(KeyEvent.VK_LEFT))  rv.add(-1, 0);
+        if(isKeyDown('d') || isKeyDown('D') || isKeyDown(KeyEvent.VK_RIGHT)) rv.add( 1, 0);
 
         /* return */
         return rv;
