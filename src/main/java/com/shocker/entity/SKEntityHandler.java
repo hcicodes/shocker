@@ -138,7 +138,68 @@
     *****************************************/
     public void render(SKFWindow target)
     {
+        /* loop through all layers and entities */
+        for(int i = 0; i < MAXLAYERS; i++)
+        {
+            for(int j = 0; j < MAXENTITIES; j++)
+            {
+                /* check for not null */
+                if(entityStack[i][j] != null)
+                {
+                    /* create temp entity */
+                    SKEntity tempEntity = entityStack[i][j];
 
+                    /* get variables */
+                    int renderFlags = tempEntity.renderFlags;
+                    SKFVector ePos  = tempEntity.position;
+                    SKFRenderSet rSet = tempEntity.renderSet;
+                    SKFTexture texture = tempEntity.texture;
+                    int texX = tempEntity.textureX;
+                    int texY = tempEntity.textureY;
+
+                    /* switch render based on renderflags */
+                    switch (renderFlags) 
+                    {
+                        case SKEntity.ENTITY_RENDERSET:
+                            /* draw renderset and check for null */
+                            if(rSet != null)
+                            {
+                                target.drawRenderSet((int)ePos.x, (int)ePos.y, rSet);
+                            }
+                            else
+                            {
+                                System.err.println("Improperly set RenderSet!");
+                            }
+
+                            /* end */
+                            break;
+
+                        case SKEntity.ENTITY_TEXTURE:
+                            /* draw texture and check for null */
+                            if(texture != null)
+                            {
+                                target.drawTexture((int)ePos.x, (int)ePos.y,
+                                 texX, texY, texture);
+                            }
+                            else
+                            {
+                                System.err.println("Improperly set Texture!");
+                            }
+
+                            /* end */
+                            break;
+
+                        case SKEntity.ENTITY_NOTINIT:
+                            /* log err */
+                            System.err.println("ENTITY IMPROPERLY INIT!");
+                            System.err.printf("ENTITY AT LAYER: %d, INDEX: %d\n", i, j);
+
+                            /* end */
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     /******************************************
@@ -190,7 +251,7 @@
                     tempEntity.position.add(tempEntity.velocity);
     
                     /* update velocity */
-                    if(tempEntity.velocity.getMagnitude() > 0.075)
+                    if(tempEntity.velocity.getMagnitude() > 0.005)
                     {
                         /* damp and clamp */
                         float clampDrag = 1 - tempEntity.drag;

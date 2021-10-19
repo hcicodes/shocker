@@ -34,9 +34,9 @@
     public float     colliderRadius;
 
     /* terrible enum for rendering */
-    public final int ENTITY_RENDERSET = 0;
-    public final int ENTITY_TEXTURE   = 1;
-    public final int ENTITY_NOTINIT   = 2;
+    public static final int ENTITY_RENDERSET = 0;
+    public static final int ENTITY_TEXTURE   = 1;
+    public static final int ENTITY_NOTINIT   = 2;
 
     /* entity RENDER members */
     public SKFRenderSet renderSet;
@@ -44,6 +44,10 @@
     public boolean      isVisible;
     public int          renderLayer;
     public int          renderFlags;
+
+    /* texture params */
+    public int textureX;
+    public int textureY;
 
     /* empty ctor */
     public SKEntity( )
@@ -65,7 +69,8 @@
     }
 
     /* proper ctor */
-    public SKEntity(int x, int y, int entityRenderFlags, int layer, SKFRenderSet rs, SKFTexture tx)
+    public SKEntity(int x, int y, int entityRenderFlags, int layer, SKFRenderSet rs, 
+    SKFTexture tx, int tX, int tY)
     {
         /* set isOnStart to true, so that onStart callback can execute */
         isOnStart = true;
@@ -90,6 +95,10 @@
 
         renderLayer = layer;
         isVisible   = true;
+
+        /* set texture vars */
+        textureX = tX;
+        textureY = tY;
     }
 
     /******************************************
@@ -101,10 +110,13 @@
      *  int layer -> layer
      *  SKFRenderSet rs -> renderset (can be null)
      *  SKFTexture tx -> texture (can be null)
+     *  int tX -> texture scale X
+     *  int tY -> texture scale Y
      * RETURNS:
      *  void
     *****************************************/
-    public void init(int x, int y, int flags, int layer, SKFRenderSet rs, SKFTexture tx)
+    public void init(int x, int y, int flags, int layer, SKFRenderSet rs,
+     SKFTexture tx, int tX, int tY)
     {
         /* set isOnStart to true, so that onStart callback can execute */
         isOnStart = true;
@@ -129,6 +141,10 @@
 
         renderLayer = layer;
         isVisible   = true;
+
+        /* set texture vars */
+        textureX = tX;
+        textureY = tY;
     }
 
     /******************************************
