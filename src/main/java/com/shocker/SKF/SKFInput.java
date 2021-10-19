@@ -24,58 +24,115 @@
 
  public final class SKFInput implements KeyListener
  {
+    /* defs */
+    public static final int MAXKEYS = 10;
+
     /* current key down */
-    public static int  currentKeyDown;
+    public static int[] currentKeysDown;
 
     /* current char */
-    public static char currentChar;
+    public static char[] currentChars;
+
+    /* init function */
+    public SKFInput( )
+    {
+        currentKeysDown = new int[MAXKEYS];
+        currentChars = new char[MAXKEYS];
+    }
 
     /* get input axis */
     public static SKFVector getInputAxis( )
     {
-        SKFVector rv = new SKFVector(0, 0);
+        
+        /* create new vector */
+        SKFVector rv = new SKFVector( );
 
-        /* arrow keys */
-        if(upArrowPressed( ))    rv.add(0,  1);
-        if(downArrowPressed( ))  rv.add(0, -1);
-        if(leftArrowPressed( ))  rv.add(-1, 0);
-        if(rightArrowPressed( )) rv.add(1,  0);
+        /* check WASD */
+        if(isKeyDown('w') || isKeyDown(KeyEvent.VK_UP))    rv.add(0,  1);
+        if(isKeyDown('s') || isKeyDown(KeyEvent.VK_DOWN))  rv.add(0, -1);
+        if(isKeyDown('a') || isKeyDown(KeyEvent.VK_LEFT))  rv.add(-1, 0);
+        if(isKeyDown('d') || isKeyDown(KeyEvent.VK_RIGHT)) rv.add( 1, 0);
 
-        /* WASD */
-        int kd = currentKeyDown;
-        if(kd == KeyEvent.VK_W) rv.add(0,  1);
-        if(kd == KeyEvent.VK_S) rv.add(0, -1);
-        if(kd == KeyEvent.VK_A) rv.add(-1, 0);
-        if(kd == KeyEvent.VK_D) rv.add(1,  0);
-
+        /* return */
         return rv;
     }
 
-    public static boolean upArrowPressed( )
+    /* check for key down */
+    public static boolean isKeyDown(int keyCode)
     {
-        return currentKeyDown == KeyEvent.VK_UP;
+        /* loop and find matching */
+        for(int i = 0; i < MAXKEYS; i++)
+        {
+            if (currentKeysDown[i] == keyCode)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public static boolean downArrowPressed( )
+    /* check for key down */
+    public static boolean isKeyDown(char charNum)
     {
-        return currentKeyDown == KeyEvent.VK_DOWN;
+        /* loop and find matching */
+        for(int i = 0; i < MAXKEYS; i++)
+        {
+            if (currentChars[i] == charNum)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public static boolean leftArrowPressed( )
+    /* print keys down */
+    public static void printKeysDown( )
     {
-        return currentKeyDown == KeyEvent.VK_LEFT;
+        System.out.printf("Keys down: [");
+        for(int i = 0; i < MAXKEYS; i++)
+        {
+            System.out.printf("%d, ", currentKeysDown[i]);
+        }
+        System.out.printf("]\n");
     }
 
-    public static boolean rightArrowPressed( )
-    {
-        return currentKeyDown == KeyEvent.VK_RIGHT;
-    }
-
+    /* on key pressed */
     public void keyPressed(KeyEvent event)
     {
-        /* update variables */
-        currentKeyDown = event.getKeyCode( );
-        currentChar    = event.getKeyChar( );
+        int scannedKeyCode = event.getKeyCode( );
+        char scannedChar = event.getKeyChar( );
+
+        /* find free space in ckd */
+        for(int i = 0; i < MAXKEYS; i++)
+        {
+            if(currentKeysDown[i] == scannedKeyCode)
+            {
+                break;
+            }
+
+            if(currentKeysDown[i] == 0)
+            {
+                currentKeysDown[i] = scannedKeyCode;
+                break;
+            }
+        }
+
+        /* find free space in cc */
+        for(int i = 0; i < MAXKEYS; i++)
+        {
+            if(currentChars[i] == scannedChar)
+            {
+                break;
+            }
+
+            if(currentChars[i] == 0)
+            {
+                currentChars[i] = scannedChar;
+                break;
+            }
+        }
     }
 
     public void keyTyped(KeyEvent event)
@@ -85,8 +142,22 @@
 
     public void keyReleased(KeyEvent event)
     {
-        /* clear all */
-        currentKeyDown = -1;
-        currentChar = 0;
+        /* get keys up */
+        int getKeyUp = event.getKeyCode( );
+        int getCharUp = event.getKeyChar( );
+
+        /* loop and find match */
+        for(int i = 0; i < MAXKEYS; i++)
+        {
+            /* clear if matching */
+            if(getKeyUp == currentKeysDown[i])
+            {
+                currentKeysDown[i] = 0;
+            }
+            if(getCharUp == currentChars[i])
+            {
+                currentChars[i] = 0;
+            }
+        }
     }
  }
