@@ -1,6 +1,8 @@
 package com.shocker;
 
+import com.shocker.SKF.SKFInput;
 import com.shocker.SKF.SKFRenderSet;
+import com.shocker.SKF.SKFVector;
 import com.shocker.SKF.SKFWindow;
 import com.shocker.entity.SKEntity;
 import com.shocker.entity.SKEntityHandler;
@@ -20,11 +22,11 @@ public class App {
 
         /* create test entity */
         _TestEntity tent = new _TestEntity( );
-        tent.init(250, 250, SKEntity.ENTITY_RENDERSET, 0, renSet, null, 0, 0);
+        tent.init(20, 250, SKEntity.ENTITY_RENDERSET, 0, renSet, null, 0, 0);
 
         /* set entity params */
-        tent.velocity.set(1.3f, 0.1f);
-        tent.drag = 0.01f;
+        tent.velocity.set(4f, 0.2f);
+        tent.drag = 0.0125f;
 
         /* create entity handler object */
         SKEntityHandler eh = new SKEntityHandler( );
@@ -35,6 +37,11 @@ public class App {
         /* update loop */
         while(true)
         {
+            /* update velocity */
+            SKFVector acceleration = SKFInput.getInputAxis( );
+            acceleration.scale(0.02f);
+            tent.velocity.add(acceleration);
+
             /* UPDATE PHYSICS */
             eh.update( );
 

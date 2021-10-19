@@ -28,6 +28,9 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
 
  public final class SKFWindow
  {
+    /* listener member */
+    private SKFInput kListener;
+
     /* number of framebuffers to swap between */
     private static final int NUMBUFFERS  = 2;
 
@@ -67,6 +70,10 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
         jWindow.setSize(wDimX, wDimY);
         jWindow.setResizable(false);
         jWindow.setVisible(true);
+
+        /* init listener */
+        kListener = new SKFInput( );
+        jWindow.addKeyListener(kListener);
 
         /* on window close, kill everything */
         jWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
