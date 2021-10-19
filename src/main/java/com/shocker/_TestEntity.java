@@ -16,7 +16,6 @@ public class _TestEntity extends SKEntity
     {
         public void update()
         {
-            velocity.add(0.0075f, 0);
         }
 
         public void onCollide()

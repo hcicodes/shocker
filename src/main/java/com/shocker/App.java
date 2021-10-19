@@ -22,7 +22,7 @@ public class App {
 
         /* create test entity */
         _TestEntity tent = new _TestEntity( );
-        tent.init(20, 250, SKEntity.ENTITY_RENDERSET, 0, renSet, null, 0, 0);
+        tent.init(20, 250, SKEntity.ENTITY_RENDERSET, 2, renSet, null, 0, 0);
 
         /* set entity params */
         tent.velocity.set(4f, 0.2f);
@@ -30,9 +30,13 @@ public class App {
 
         /* create entity handler object */
         SKEntityHandler eh = new SKEntityHandler( );
+        eh.deBugmode = true;
 
         /* add entity */
-        eh.addEntity(tent);
+        int hndl = eh.addEntity(tent);
+        eh.removeEntity(hndl);
+
+        //System.exit(0);
 
         /* update loop */
         while(true)

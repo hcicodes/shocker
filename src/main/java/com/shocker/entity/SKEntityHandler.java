@@ -20,7 +20,7 @@
 
  package com.shocker.entity; /* package name */
 
- import com.shocker.SKF.*; /* all framework classes */
+import com.shocker.SKF.*; /* all framework classes */
 
  public final class SKEntityHandler
  {
@@ -78,34 +78,43 @@
     *****************************************/
     public int addEntity(SKEntity ent)
     {
-        /* find empty spot for ent */
-        for(int i = 0; i < MAXLAYERS; i++)
+        /* loop through layer */
+        for(int i = 0; i < MAXENTITIES; i++)
         {
-            for(int j = 0; j < MAXENTITIES; j++)
+            /* find free space */
+            if(entityStack[ent.renderLayer][i] == null)
             {
-                if(entityStack[i][j] == null)
+                /* debug output */
+                if(deBugmode)
                 {
-                    /* add entity and increment count */
-                    entityStack[ent.renderLayer][i] = ent;
-                    entityCount++;
-    
-                    /* if debug mode, log it */
-                    if(deBugmode)
-                    {
-                        System.out.printf(">>> Adding entity to layer: %d\n", ent.renderLayer);
-                        System.out.printf(">>> Added entity to stack position: %d\n", j);
-                    }
-    
-                    /* create physics vars */
-                    anticipatedPositions[ent.renderLayer][j] = new SKFVector(ent.position.x, ent.position.y);
-    
-                    return j;
+                    System.out.printf(">>>Found free spot at: %d\n", i);
+                    System.out.printf(">>>Adding entity to layer: %d\n", ent.renderLayer);
                 }
+
+                /* add entity and increment count */
+                anticipatedPositions[ent.renderLayer][i] = new SKFVector( );
+                entityStack[ent.renderLayer][i] = ent;
+                entityCount++;
+
+                /* create handle */
+                /* first two bytes reserved for index */
+                /* last two bytes reserved for layer */
+                /* BITMASK:
+                 * IIIIIIIIIIIIIIIILLLLLLLLLLLLLLLL */
+                int handle;          /* handle to return */
+                int index = i;       /* upper 2 bits */
+                int layer = ent.renderLayer; /* lower 2 bits */
+                index = index << 16;  /* shift up */
+
+                handle = index | layer; /* create handle */
+
+                /* return */
+                return handle;
             }
         }
 
-        /* no free spot found! */
-        System.err.printf("TOO MANY ENTITIES!\n");
+        /* no free space */
+        System.err.printf("NO ENTITY SPACES LEFT!\n");
         return -1;
     }
 
@@ -118,14 +127,20 @@
     *****************************************/
     public void removeEntity(int entHndl)
     {
+        /* get layer */
+        int eLayer = entHndl & 0b00000000000000001111111111111111;
+
+        /* get index */
+        int index = entHndl >> 16;
+
         /* if debug mode */
         if(deBugmode)
         {
-            System.out.printf("Removing entity from stack position: %d\n", entHndl);
+            System.out.printf(">>>Removing entity at: %d %d\n", eLayer, index);
         }
 
-        /* free stack space and decrement eCount */
-        entityStack[entHndl] = null;
+        /* remove entity and decrement */
+        entityStack[eLayer][index] = null;
         entityCount--;
     }
 
