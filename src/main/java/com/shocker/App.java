@@ -39,7 +39,7 @@ public class App {
         {
             /* update velocity */
             SKFVector acceleration = SKFInput.getInputAxis( );
-            acceleration.scale(0.02f);
+            acceleration.scale(0.01f);
             tent.velocity.add(acceleration);
 
             /* UPDATE PHYSICS */
