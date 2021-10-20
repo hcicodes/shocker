@@ -16,6 +16,7 @@ public class _TestEntity extends SKEntity
     {
         public void update()
         {
+            
         }
 
         public void onCollide()

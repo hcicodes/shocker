@@ -1,11 +1,7 @@
 package com.shocker;
 
-import com.shocker.SKF.SKFInput;
-import com.shocker.SKF.SKFRenderSet;
-import com.shocker.SKF.SKFVector;
-import com.shocker.SKF.SKFWindow;
-import com.shocker.entity.SKEntity;
-import com.shocker.entity.SKEntityHandler;
+import com.shocker.entity.*;
+import com.shocker.SKF.*;
 import java.awt.*;
 
 /* main */
@@ -16,7 +12,7 @@ public class App {
         /* setup window */
         SKFWindow win = new SKFWindow(500, 500);
 
-        /* setup texture */
+        /* setup renderSet */
         SKFRenderSet renSet = new SKFRenderSet( );
         renSet.addOval(0, 0, 50, 50, new Color(255, 0, 0));
 
@@ -30,13 +26,9 @@ public class App {
 
         /* create entity handler object */
         SKEntityHandler eh = new SKEntityHandler( );
-        eh.deBugmode = true;
 
         /* add entity */
         int hndl = eh.addEntity(tent);
-        eh.removeEntity(hndl);
-
-        //System.exit(0);
 
         /* update loop */
         while(true)
@@ -46,10 +38,14 @@ public class App {
             acceleration.scale(0.01f);
             tent.velocity.add(acceleration);
 
+            /* test thing */
+            if(SKFInput.isKeyDown('q'))
+            {
+                eh.removeEntity(hndl);
+            }
+
             /* UPDATE PHYSICS */
             eh.update( );
-
-            //SKFInput.printKeysDown( );
 
             /* clear window */
             win.clearBuffer( );
@@ -59,7 +55,6 @@ public class App {
 
             /* flip */
             win.flipBuffer( );
-            
         }
     }
 }
