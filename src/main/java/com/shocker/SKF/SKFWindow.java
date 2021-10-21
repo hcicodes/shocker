@@ -28,6 +28,9 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
 
  public final class SKFWindow
  {
+    /* listener member */
+    private SKFInput kListener;
+
     /* number of framebuffers to swap between */
     private static final int NUMBUFFERS  = 2;
 
@@ -67,6 +70,10 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
         jWindow.setSize(wDimX, wDimY);
         jWindow.setResizable(false);
         jWindow.setVisible(true);
+
+        /* init listener */
+        kListener = new SKFInput( );
+        jWindow.addKeyListener(kListener);
 
         /* on window close, kill everything */
         jWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -167,7 +174,7 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
         /* set draw color and render */
         /* remember to inverse Y     */
         renderObject.setColor(dc);
-        renderObject.drawLine(p1f.x, wDimY - p1f.y, p2f.x, wDimY - p2f.y);
+        renderObject.drawLine((int)p1f.x, (int)wDimY - (int)p1f.y, (int)p2f.x, (int)wDimY - (int)p2f.y);
     }
 
     /******************************************
@@ -196,7 +203,7 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
         /* set draw color and render */
         /* remember to inverse Y     */
         renderObject.setColor(dc);
-        renderObject.drawLine(p1f.x, wDimY - p1f.y, p2f.x, wDimY - p2f.y);
+        renderObject.drawLine((int)p1f.x, (int)wDimY - (int)p1f.y, (int)p2f.x, (int)wDimY - (int)p2f.y);
     }
 
     /******************************************
@@ -213,8 +220,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
     public void drawRect(int x, int y, int w, int h, Color dc)
     {
         /* get final draw positions */
-        int fx = x - cameraPosition.x;
-        int fy = y - cameraPosition.y;
+        int fx = (int)x - (int)cameraPosition.x;
+        int fy = (int)y - (int)cameraPosition.y;
 
         /* set draw color and render */
         renderObject.setColor(dc);
@@ -234,8 +241,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
     public void drawRect(SKFVector pos, int w, int h, Color dc)
     {
         /* get final draw positions */
-        int fx = pos.x - cameraPosition.x;
-        int fy = pos.y - cameraPosition.y;
+        int fx = (int)pos.x - (int)cameraPosition.x;
+        int fy = (int)pos.y - (int)cameraPosition.y;
 
         /* set draw color and render */
         /* REMEMBER TO INVERSE Y     */
@@ -257,8 +264,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
     public void outlineRect(int x, int y, int w, int h, Color dc)
     {
         /* get final draw positions */
-        int fx = x - cameraPosition.x;
-        int fy = y - cameraPosition.y;
+        int fx = (int)x - (int)cameraPosition.x;
+        int fy = (int)y - (int)cameraPosition.y;
 
         /* set draw color and render */
         renderObject.setColor(dc);
@@ -278,8 +285,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
     public void outlineRect(SKFVector pos, int w, int h, Color dc)
     {
         /* get final draw positions */
-        int fx = pos.x - cameraPosition.x;
-        int fy = pos.y - cameraPosition.y;
+        int fx = (int)pos.x - (int)cameraPosition.x;
+        int fy = (int)pos.y - (int)cameraPosition.y;
 
         /* set draw color and render */
         /* REMEMBER TO INVERSE Y     */
@@ -301,8 +308,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
     public void drawOval(int x, int y, int w, int h, Color dc)
     {
         /* get final draw positions */
-        int fx = x - cameraPosition.x - (w / 2);
-        int fy = y - cameraPosition.y + (h / 2);
+        int fx = x - (int)cameraPosition.x - (w / 2);
+        int fy = y - (int)cameraPosition.y + (h / 2);
 
         /* set draw color and render */
         renderObject.setColor(dc);
@@ -322,8 +329,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
     public void drawOval(SKFVector pos, int w, int h, Color dc)
     {
         /* get final draw positions */
-        int fx = pos.x - cameraPosition.x - (w / 2);
-        int fy = pos.y - cameraPosition.y + (h / 2);
+        int fx = (int)pos.x - (int)cameraPosition.x - (w / 2);
+        int fy = (int)pos.y - (int)cameraPosition.y + (h / 2);
 
         /* set draw color and render */
         /* REMEMBER TO INVERSE Y     */
@@ -345,8 +352,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
     public void outlineOval(int x, int y, int w, int h, Color dc)
     {
         /* get final draw positions */
-        int fx = x - cameraPosition.x - (w / 2);
-        int fy = y - cameraPosition.y + (h / 2);
+        int fx = (int)x - (int)cameraPosition.x - (w / 2);
+        int fy = (int)y - (int)cameraPosition.y + (h / 2);
 
         /* set draw color and render */
         renderObject.setColor(dc);
@@ -366,8 +373,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
     public void outlineOval(SKFVector pos, int w, int h, Color dc)
     {
         /* get final draw positions */
-        int fx = pos.x - cameraPosition.x - (w / 2);
-        int fy = pos.y - cameraPosition.y + (h / 2);
+        int fx = (int)pos.x - (int)cameraPosition.x - (w / 2);
+        int fy = (int)pos.y - (int)cameraPosition.y + (h / 2);
 
         /* set draw color and render */
         /* REMEMBER TO INVERSE Y     */
@@ -395,8 +402,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
         /* fill and transform */
         for(int i = 0; i < rLen; i++)
         {
-            txVArr[i] = pxv[i] - cameraPosition.x + pos.x;
-            tyVArr[i] = wDimY - pyv[i] - cameraPosition.y - pos.y;
+            txVArr[i] = (int)pxv[i] - (int)cameraPosition.x + (int)pos.x;
+            tyVArr[i] = (int)wDimY - (int)pyv[i] - (int)cameraPosition.y - (int)pos.y;
         }
 
         /* set color and send arrays down    */
@@ -424,8 +431,8 @@ import com.shocker.SKF.SKFRenderSet.SKFArgset; /* argset class */
         /* fill and transform */
         for(int i = 0; i < rLen; i++)
         {
-            txVArr[i] = vA[i].x - cameraPosition.x + pos.x;
-            tyVArr[i] = wDimY - vA[i].y - cameraPosition.y - pos.y;
+            txVArr[i] = (int)vA[i].x - (int)cameraPosition.x + (int)pos.x;
+            tyVArr[i] = (int)wDimY - (int)vA[i].y - (int)cameraPosition.y - (int)pos.y;
         }
         /* set color and send arrays down    */
         /* to graphics handler for rendering */
