@@ -21,6 +21,7 @@
  package com.shocker.entity; /* entity name */
 
  import com.shocker.SKF.*; /* all framework classes */
+ import com.shocker.physics.*; /* physics classes */
 
  public abstract class SKEntity
  {
@@ -30,8 +31,7 @@
     /* entity PHYSICS members */
     public SKFVector position;
     public SKFVector velocity;
-    public float     drag;
-    public float     colliderRadius;
+    public SKPhysicsProperties physProperties;
 
     /* terrible enum for rendering */
     public static final int ENTITY_RENDERSET = 0;
@@ -58,8 +58,7 @@
         /* set everything to default values */
         position = new SKFVector( );
         velocity = new SKFVector( );
-        colliderRadius = 0;
-        drag = 0;
+        physProperties = new SKPhysicsProperties(SKPhysicsProperties.BOUNDING_BOX);
 
         renderFlags = ENTITY_NOTINIT;
         renderSet   = null;
@@ -78,8 +77,7 @@
         /* setup PHYSICS vars */
         position = new SKFVector(x, y);
         velocity = new SKFVector( );
-        colliderRadius = 0f;
-        drag = 0f;
+        physProperties = new SKPhysicsProperties(SKPhysicsProperties.BOUNDING_BOX);
 
         /* setup RENDER vars */
         renderFlags = entityRenderFlags;
@@ -124,8 +122,7 @@
         /* setup PHYSICS vars */
         position = new SKFVector(x, y);
         velocity = new SKFVector( );
-        colliderRadius = 0f;
-        drag = 0f;
+        physProperties = new SKPhysicsProperties(SKPhysicsProperties.BOUNDING_BOX);
 
         /* setup RENDER vars */
         renderFlags = flags;

@@ -264,35 +264,7 @@ import com.shocker.SKF.*; /* all framework classes */
 
                     /* UPDATE TEMP ENTITY */
                     tempEntity.update( );
-    
-                    /* update positon */
-                    tempEntity.position.add(tempEntity.velocity);
-    
-                    /* update velocity */
-                    if(tempEntity.velocity.getMagnitude() > 0.005)
-                    {
-                        /* damp and clamp */
-                        float clampDrag = 1 - tempEntity.drag;
-                        if(clampDrag < 0) { clampDrag = 0; }
-                        tempEntity.velocity.scale(clampDrag);
-                    }
-                    else
-                    {
-                        /* if velocity is negigble, set to 0 */
-                        tempEntity.velocity.set(0, 0);
-                    }
-    
-                    /* debug */
-                    if(deBugmode)
-                    {
-                        System.out.printf("Time: %d\n", ticksPassed);
-                        System.out.printf("Velocity: (%f, %f)\n",
-                        tempEntity.velocity.x, tempEntity.velocity.y);
-                        System.out.printf("VMag: %f\n", tempEntity.velocity.getMagnitude());
-                        System.out.printf("Position: (%f, %f)\n",
-                        tempEntity.position.x, tempEntity.position.y);
-                    }
-    
+                    
                     /* debug */
                     if(deBugmode)
                     {
