@@ -34,9 +34,6 @@ import com.shocker.SKF.*; /* all framework classes */
     /* private entity related vars */
     private int          entityCount;
     private SKEntity[][] entityStack;
-    
-    /* physics related vars */
-    private SKFVector[][] anticipatedPositions;
 
     /* debug mode boolean */
     public boolean deBugmode;
@@ -52,9 +49,6 @@ import com.shocker.SKF.*; /* all framework classes */
 
         /* init estack */
         entityStack = new SKEntity[MAXLAYERS][MAXENTITIES];
-
-        /* inti vector list */
-        anticipatedPositions = new SKFVector[MAXLAYERS][MAXENTITIES];
     }
 
     /******************************************
@@ -92,7 +86,6 @@ import com.shocker.SKF.*; /* all framework classes */
                 }
 
                 /* add entity and increment count */
-                anticipatedPositions[ent.renderLayer][i] = new SKFVector( );
                 entityStack[ent.renderLayer][i] = ent;
                 entityCount++;
 
@@ -263,7 +256,7 @@ import com.shocker.SKF.*; /* all framework classes */
                     }
 
                     /* UPDATE TEMP ENTITY */
-                    tempEntity.update( );
+                    tempEntity.update(ticksPassed);
                     
                     /* debug */
                     if(deBugmode)

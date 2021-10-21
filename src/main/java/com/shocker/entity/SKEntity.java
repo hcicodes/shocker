@@ -147,11 +147,11 @@
     /******************************************
      * METHOD: update
      * PARAMS:
-     *  N/A
+     *  long timePassed -> update iterations passed
      * RETURNS:
      *  void
     *****************************************/
-    public abstract void update( );
+    public abstract void update(long timePassed);
 
     /******************************************
      * METHOD: onStart
