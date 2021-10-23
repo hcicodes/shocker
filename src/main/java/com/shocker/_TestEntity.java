@@ -11,12 +11,15 @@ package com.shocker;
 
 /* import com.shocker.SKF.*; */
 import com.shocker.entity.*;
+import com.shocker.SKF.*;
 
 public class _TestEntity extends SKEntity
     {
         public void update(long time)
         {
-            
+            SKFVector iVec = SKFInput.getInputAxis( );
+            iVec.scale(0.01f);
+            velocity.add(iVec);
         }
 
         public void onCollide()

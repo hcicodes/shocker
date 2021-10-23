@@ -50,14 +50,11 @@ public class App {
 
         pHandler.addPhysObject(entity0);
         pHandler.addPhysObject(entity1);
+        pHandler.updateInterval = 5;
 
         /* main render loop */
         while(true)
         {
-            SKFVector iVec = SKFInput.getInputAxis( );
-            iVec.scale(0.01f);
-            entity0.velocity.add(iVec);
-
             window.clearBuffer( );
 
             pHandler.physicsUpdate( );

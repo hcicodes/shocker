@@ -461,6 +461,8 @@
                 /* UPDATE ENTITY POSITION */
                 scanE.position = vecBuffer[i];
 
+                /* EXECUTE ENTITY UPDATE CALLBACK */
+                scanE.update(System.currentTimeMillis( ));
             } /* END POBJ NULL CHECK */
 
         } /* END POBJ LOOP */
