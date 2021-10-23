@@ -17,7 +17,7 @@
 
  package com.shocker.physics; /* package name */
 
- import java.util.Arrays;
+ import java.util.Arrays; /* array sorting function */
 
  import com.shocker.SKF.*;    /* all framework classes */
  import com.shocker.entity.*; /* all entity classes    */
@@ -31,6 +31,10 @@
      public static final int MAXPOBJS   = 0x80;
      public static final int MAXPGROUPS = 0x30;
      public static final int MAXPGSIZE  = 0x40;
+
+     /* update interval */
+     public int updateInterval = 20;
+     private long lastUpdateTime = System.currentTimeMillis( );
 
      /* buffers */
      public boolean[] overlapBuffer  = new boolean[MAXPOBJS];
@@ -269,6 +273,26 @@
     * ********************************************************/
     public void physicsUpdate( )
     {
+        /* make sure the fixed time step */
+        /* has passed. if it's been before */
+        /* that amount of time, don't execute */
+        if(System.currentTimeMillis( ) < lastUpdateTime + updateInterval)
+        {
+            /* end early and log if debug mode */
+            if(debugMode)
+            {
+                System.out.printf("[Skipped physUpdate at: %d]\n", System.currentTimeMillis( ));
+                System.out.printf("[Expected update time:  %d]\n", lastUpdateTime + updateInterval);
+            }
+
+            return;
+        }
+        else
+        {
+            /* update last exec time */
+            lastUpdateTime = System.currentTimeMillis( );
+        }
+
         /* firstly, clear all PGroups */
         clearPhysGroups( );
 
