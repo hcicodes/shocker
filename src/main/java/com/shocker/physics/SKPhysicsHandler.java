@@ -333,6 +333,28 @@ import com.shocker.SKF.*;    /* all framework classes */
                             /* get collider data object */
                             SKPhysicsProperties tPhysData = tEnt.physProperties;
                             SKPhysicsProperties sPhysData = sEnt.physProperties;
+
+                            /* calculate collider data */
+                            /* THIS IS A HUUUUGE PAIN IN THE ASS */
+                            SKFVector sourcePos = new SKFVector( );
+                            SKFVector targetPos = new SKFVector( );
+                            SKFVector sourceDim = new SKFVector( );
+                            SKFVector targetDim = new SKFVector( );
+
+                            /* grab collider data in array form */
+                            float[] srcBox = sPhysData.getBoundingBox( );
+                            float[] trgBox = tPhysData.getBoundingBox( );
+
+                            /* account for collider offset to actual position */
+                            sourcePos.set(sEnt.position.x + srcBox[0], sEnt.position.y + srcBox[1]);
+                            targetPos.set(tEnt.position.x + trgBox[0], tEnt.position.y + trgBox[1]);
+
+                            /* pack dimensions into vector object */
+                            sourceDim.set(srcBox[2], srcBox[3]);
+                            targetDim.set(trgBox[2], trgBox[3]);
+
+                            /* check overlap */
+                            boolean overlap = checkOverlap(sourcePos, targetPos, sourceDim, targetDim);
                         }
 
                     } /* TARGET COMPARISON LOOP END */
