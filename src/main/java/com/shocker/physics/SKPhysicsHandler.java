@@ -193,7 +193,7 @@
         if(debugMode)
         {
             System.out.printf("----------------------------------------\n");
-            System.out.printf("LOGGIN ALL PGROUP VALS:\n");
+            System.out.printf("LOGGING ALL PGROUP VALS:\n");
 
             /* loop all pgroups, log if !null */
             for(int i = 0; i < MAXPGROUPS; i++)
@@ -202,7 +202,7 @@
                 {
                     System.out.printf("PGROUP[%d] vals:\n", i);
                     System.out.printf("\tGroup Val: (%d, %d)\n", pGroups[i].gX, pGroups[i].gY);
-                    System.out.printf("IList: [ ");
+                    System.out.printf("\tIList: [ ");
                     for(int j = 0; j < pGroups[i].piSize; j++)
                     {
                         System.out.printf("%d,", pGroups[i].pBuffIndexes[j]);
@@ -214,6 +214,85 @@
             /* log segment end */
             System.out.printf("----------------------------------------\n");
         }
+    }
+
+    /* ********************************************************
+    * METHOD: physicsUpdate
+    * PARAMS:
+    *  N/A
+    * RETURNS:
+    *  void
+    * ********************************************************/
+    public void physicsUpdate( )
+    {
+        /* firstly, clear all PGroups */
+        clearPhysGroups( );
+
+        /* secondly, generate all PGroups */
+        generatePhysGroups( );
+
+        /* for all PGroups */
+        for(int i = 0; i < MAXPGROUPS; i++)
+        {
+            if(pGroups[i] != null)
+            {
+                /* actively scanned object */
+                SKPhysicsGroup sGroup = pGroups[i];
+
+                /* generate all anticipated vectors */
+                for(int j = 0; j < sGroup.piSize; j++)
+                {
+                    /* get corresponding vector index to the */
+                    /* scanned pBuffer index */
+                    /* this may seem a little confusing but i promise */
+                    /* if you review all the code before this it will */
+                    /* make sense */
+                    int vBufferIndex = sGroup.pBuffIndexes[j];
+
+                    /* get entity object */
+                    /* remember, vBuff[i] corresponds to pOBuff[i]*/
+                    SKEntity scannedEnt = pObjBuffer[vBufferIndex];
+
+                    /* set corresponding vector to scanEnt position */
+                    /* and then update by velocity */
+                    vecBuffer[vBufferIndex] = scannedEnt.position;
+                    vecBuffer[vBufferIndex].add(scannedEnt.velocity);
+
+                } /* COMPLETED GENERATING A-VECTORS OF ALL POBJS IN PGROUP */
+
+                /* check for collisions */
+                /* for each object, check all other objects and see if */
+                /* the bounding boxes overlap. however, instead of using */
+                /* their current position, comapare using the anticipated */
+                /* vector/position */
+                for(int j = 0; j < sGroup.piSize; j++)
+                {
+                    /* here's the naming scheme: i will compare */
+                    /* a source entity with a target entity */
+
+                    /* get source indx */
+                    int sIndx = sGroup.pBuffIndexes[j];
+
+                    /* get source entity entity */
+                    SKEntity sEnt = pObjBuffer[sIndx];
+
+                    /* check all target ents */
+                    for(int k = 0; k < sGroup.piSize; k++)
+                    {
+                        if(!(k == j)) /* AVOID SELF COLLISION */
+                        {
+                            /* get target index and entity */
+                            int tIndx = sGroup.pBuffIndexes[k];
+                            SKEntity tEnt = pObjBuffer[tIndx];
+                        }
+
+                    } /* TARGET COMPARISON LOOP END */
+
+                } /* SOURCE COMPARISON LOOP END */
+
+            } /* PGROUP NULL CHECK */
+            
+        } /* LOOP ALL PGROUPS */
     }
 
  }
