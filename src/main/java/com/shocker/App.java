@@ -27,7 +27,7 @@ public class App {
         entity0.physProperties.setBoundingBox(0, 0, 20, 20);
 
         /* setup entity0 physics properties */
-        entity0.physProperties.bounciness = 0.3f;
+        entity0.physProperties.bounciness = 0.5f;
         entity0.velocity.set(1f, 1f);
         entity0.physProperties.drag = 0.005f;
 
@@ -35,6 +35,9 @@ public class App {
         _TestEntity entity1 = new _TestEntity( );
         entity1.init(400, 400, SKEntity.ENTITY_RENDERSET, 1, renderSet1, null, 0, 0);
         entity1.physProperties.setBoundingBox(0, 0, 20, 20);
+        entity1.physProperties.bounciness = 0.1f;
+        entity1.velocity.set(-1f, -1f);
+        entity1.physProperties.drag = 0.005f;
 
         /* create entity handler and add entities */
         SKEntityHandler entityHandler = new SKEntityHandler( );
@@ -59,6 +62,11 @@ public class App {
 
             pHandler.physicsUpdate( );
             entityHandler.render(window);
+
+            if(SKFInput.isKeyDown('q'))
+            {
+                pHandler.removePhysObject(1);
+            }
 
             window.flipBuffer( );
         }
