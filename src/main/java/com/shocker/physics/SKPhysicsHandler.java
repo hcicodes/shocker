@@ -16,10 +16,9 @@
 
  package com.shocker.physics; /* package name */
 
- import java.lang.reflect.Array;
-import java.util.Arrays;
+ import java.util.Arrays;
 
-import com.shocker.SKF.*;    /* all framework classes */
+ import com.shocker.SKF.*;    /* all framework classes */
  import com.shocker.entity.*; /* all entity classes    */
 
  public final class SKPhysicsHandler
@@ -33,6 +32,7 @@ import com.shocker.SKF.*;    /* all framework classes */
      public static final int MAXPGSIZE  = 0x40;
 
      /* buffers */
+     public boolean[] overlapBuffer  = new boolean[MAXPOBJS];
      public SKEntity[] pObjBuffer    = new SKEntity[MAXPOBJS];
      public SKFVector[] vecBuffer    = new SKFVector[MAXPOBJS];
      public SKPhysicsGroup[] pGroups = new SKPhysicsGroup[MAXPGROUPS];
@@ -274,6 +274,12 @@ import com.shocker.SKF.*;    /* all framework classes */
         /* secondly, generate all PGroups */
         generatePhysGroups( );
 
+        /* thirdly, clear overlap buffer */
+        for(int i = 0; i < MAXPOBJS; i++)
+        {
+            overlapBuffer[i] = false;
+        }
+
         /* for all PGroups */
         for(int i = 0; i < MAXPGROUPS; i++)
         {
@@ -316,19 +322,17 @@ import com.shocker.SKF.*;    /* all framework classes */
                     /* get source indx */
                     int sIndx = sGroup.pBuffIndexes[j];
 
-                    /* get source entity and source vector */
+                    /* get source entity */
                     SKEntity  sEnt = pObjBuffer[sIndx];
-                    SKFVector sVec = vecBuffer[sIndx];
 
                     /* check all target ents */
                     for(int k = 0; k < sGroup.piSize; k++)
                     {
                         if(!(k == j)) /* AVOID SELF COLLISION */
                         {
-                            /* get target index, entity and vector */
+                            /* get target index and entity */
                             int tIndx = sGroup.pBuffIndexes[k];
                             SKEntity  tEnt = pObjBuffer[tIndx];
-                            SKFVector tVec = vecBuffer[tIndx];
 
                             /* get collider data object */
                             SKPhysicsProperties tPhysData = tEnt.physProperties;
@@ -355,15 +359,48 @@ import com.shocker.SKF.*;    /* all framework classes */
 
                             /* check overlap */
                             boolean overlap = checkOverlap(sourcePos, targetPos, sourceDim, targetDim);
+
+                            /* set overlap buffer value */
+                            overlapBuffer[sIndx] = overlap;
                         }
 
                     } /* TARGET COMPARISON LOOP END */
 
                 } /* SOURCE COMPARISON LOOP END */
 
-            } /* PGROUP NULL CHECK */
+            } /* PGROUP NULL CHECK END */
 
-        } /* LOOP ALL PGROUPS */
+        } /* LOOP ALL PGROUPS END */
+
+        /* now that we know which pObjs are overlapping, we can operate on them */
+        
+        /* for all pObjs */
+        for(int i = 0; i < MAXPOBJS; i++)
+        {
+            /* if object is !null */
+            if(pObjBuffer[i] != null)
+            {
+                /* get entity object */
+                SKEntity scanE = pObjBuffer[i];
+
+                /* if overlapping */
+                if(overlapBuffer[i])
+                {
+                    /* roll back anticipated vector */
+                    vecBuffer[i] = scanE.position;
+
+                    /* change velocity based on bounciness */
+                    scanE.velocity.scale(-scanE.physProperties.bounciness);
+                }
+
+                /* dampen velocity by 1 - ent drag */
+                scanE.velocity.scale(1.0f - scanE.physProperties.drag);
+
+                /* UPDATE ENTITY POSITION */
+                scanE.position = vecBuffer[i];
+
+            } /* END POBJ NULL CHECK */
+
+        } /* END POBJ LOOP */
     }
-
  }
