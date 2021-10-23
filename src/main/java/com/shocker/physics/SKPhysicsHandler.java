@@ -3,6 +3,7 @@
  *  SKPhysicsHandler.java
  * DATE: 
  *  2021-10-20
+ *  2021-10-23
  * DEVS:
  *  Bailey Jia-Tao Brown
  * DESC:
@@ -128,7 +129,7 @@
     public void clearPhysGroups( )
     {
        /* sets all pgroup objects to NULL */
-       for(int i = 0; i < MAXPGSIZE; i++)
+       for(int i = 0; i < MAXPGROUPS; i++)
        {
            pGroups[i] = null;
        }
@@ -166,7 +167,7 @@
                        pGroups[j].gY == pNumY)
                     {
                         /* add and break for loop */
-                        pGroups[i].addIndex(i);
+                        pGroups[j].addIndex(i);
                         foundGroup = true;
                         break;
                     }
@@ -360,6 +361,16 @@
                             /* check overlap */
                             boolean overlap = checkOverlap(sourcePos, targetPos, sourceDim, targetDim);
 
+                            /* debug output */
+                            if(overlap && debugMode)
+                            {
+                                System.out.printf("PHYSICS OVERLAP BETWEEN:\n");
+                                System.out.printf("\tPOBJ[%d] at (%f , %f)\n", sIndx,
+                                sEnt.position.x, sEnt.position.y);
+                                System.out.printf("\tPOBJ[%d] at (%f , %f)\n", tIndx,
+                                tEnt.position.x, tEnt.position.y);
+                            }
+
                             /* set overlap buffer value */
                             overlapBuffer[sIndx] = overlap;
                         }
@@ -386,15 +397,34 @@
                 /* if overlapping */
                 if(overlapBuffer[i])
                 {
+                    /* debug output */
+                    if(debugMode)
+                    {
+                        System.out.printf(">>>Overlap at: %d, rolling back vectors...\n", i);
+                        System.out.printf(">>>Veloctiy before: (%f, %f)\n", scanE.velocity.x, scanE.velocity.y);
+                    }
+
                     /* roll back anticipated vector */
                     vecBuffer[i] = scanE.position;
 
                     /* change velocity based on bounciness */
                     scanE.velocity.scale(-scanE.physProperties.bounciness);
-                }
 
-                /* dampen velocity by 1 - ent drag */
-                scanE.velocity.scale(1.0f - scanE.physProperties.drag);
+                    /* update vector buffer to accomadate for bounciness */
+                    vecBuffer[i].add(scanE.velocity);
+
+                    /* debug output contd */
+                    if(debugMode)
+                    {
+                        System.out.printf(">>>Velocity after: (%f, %f)\n", scanE.velocity.x, scanE.velocity.y);
+                    }
+                }
+                else
+                {
+                    /* DO NOT UPDATE DRAG UPON BOUNCE */
+                    /* dampen velocity by 1 - ent drag */
+                    scanE.velocity.scale(1.0f - scanE.physProperties.drag);
+                }
 
                 /* UPDATE ENTITY POSITION */
                 scanE.position = vecBuffer[i];

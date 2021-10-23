@@ -1,59 +1,68 @@
 package com.shocker;
 
-import com.shocker.entity.*;
 import com.shocker.SKF.*;
+import com.shocker.entity.SKEntity;
+import com.shocker.entity.SKEntityHandler;
+import com.shocker.physics.SKPhysicsHandler;
+
 import java.awt.*;
 
 /* main */
 public class App {
 
     public static void main(String[] args) {
-        
-        /* setup window */
-        SKFWindow win = new SKFWindow(500, 500);
 
-        /* setup renderSet */
-        SKFRenderSet renSet = new SKFRenderSet( );
-        renSet.addOval(0, 0, 50, 50, new Color(255, 0, 0));
+        /* create window object */
+        SKFWindow window = new SKFWindow(500, 500);
 
-        /* create test entity */
-        _TestEntity tent = new _TestEntity( );
-        tent.init(20, 250, SKEntity.ENTITY_RENDERSET, 2, renSet, null, 0, 0);
+        /* create rendersets of cube */
+        SKFRenderSet renderSet0 = new SKFRenderSet( );
+        SKFRenderSet renderSet1 = new SKFRenderSet( );
+        renderSet0.addRect(0, 0, 20, 20, new Color(255, 0, 0));
+        renderSet1.addRect(0, 0, 20, 20, new Color(0, 255, 64));
 
-        /* set entity params */
-        tent.velocity.set(4f, 0.2f);
+        /* create first entity object */
+        _TestEntity entity0 = new _TestEntity( );
+        entity0.init(250, 250, SKEntity.ENTITY_RENDERSET, 1 , renderSet0, null, 0, 0);
+        entity0.physProperties.setBoundingBox(0, 0, 20, 20);
 
-        /* create entity handler object */
-        SKEntityHandler eh = new SKEntityHandler( );
+        /* setup entity0 physics properties */
+        entity0.physProperties.bounciness = 0.3f;
+        entity0.velocity.set(1f, 1f);
+        entity0.physProperties.drag = 0.005f;
 
-        /* add entity */
-        int hndl = eh.addEntity(tent);
+        /* create second entity object */
+        _TestEntity entity1 = new _TestEntity( );
+        entity1.init(400, 400, SKEntity.ENTITY_RENDERSET, 1, renderSet1, null, 0, 0);
+        entity1.physProperties.setBoundingBox(0, 0, 20, 20);
 
-        /* update loop */
+        /* create entity handler and add entities */
+        SKEntityHandler entityHandler = new SKEntityHandler( );
+        entityHandler.addEntity(entity0);
+        entityHandler.addEntity(entity1);
+
+        /* create physics handler */
+        SKPhysicsHandler pHandler = new SKPhysicsHandler( );
+        pHandler.debugMode = true;
+
+        pHandler.addPhysObject(entity0);
+        pHandler.addPhysObject(entity1);
+
+        /* main render loop */
         while(true)
         {
-            /* update velocity */
-            SKFVector acceleration = SKFInput.getInputAxis( );
-            acceleration.scale(0.01f);
-            tent.velocity.add(acceleration);
+            SKFVector iVec = SKFInput.getInputAxis( );
+            iVec.scale(0.01f);
+            entity0.velocity.add(iVec);
 
-            /* test thing */
-            if(SKFInput.isKeyDown('q'))
-            {
-                eh.removeEntity(hndl);
-            }
+            window.clearBuffer( );
 
-            /* UPDATE PHYSICS */
-            eh.update( );
+            pHandler.physicsUpdate( );
+            entityHandler.render(window);
 
-            /* clear window */
-            win.clearBuffer( );
-
-            /* draw */
-            eh.render(win);
-
-            /* flip */
-            win.flipBuffer( );
+            window.flipBuffer( );
         }
+
+
     }
 }
