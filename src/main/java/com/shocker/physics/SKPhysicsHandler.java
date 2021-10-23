@@ -407,8 +407,16 @@
                     /* roll back anticipated vector */
                     vecBuffer[i] = scanE.position;
 
+                    /* get negative current veloctiy */
+                    SKFVector nVel = new SKFVector( );
+                    nVel.set(scanE.velocity.x, scanE.velocity.y);
+                    nVel.scale(-1);
+
                     /* change velocity based on bounciness */
                     scanE.velocity.scale(-scanE.physProperties.bounciness);
+
+                    /* update vector by -velocity */
+                    vecBuffer[i].add(nVel);
 
                     /* update vector buffer to accomadate for bounciness */
                     vecBuffer[i].add(scanE.velocity);
