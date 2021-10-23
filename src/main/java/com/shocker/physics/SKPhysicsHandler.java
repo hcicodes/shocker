@@ -16,7 +16,10 @@
 
  package com.shocker.physics; /* package name */
 
- import com.shocker.SKF.*;    /* all framework classes */
+ import java.lang.reflect.Array;
+import java.util.Arrays;
+
+import com.shocker.SKF.*;    /* all framework classes */
  import com.shocker.entity.*; /* all entity classes    */
 
  public final class SKPhysicsHandler
@@ -217,6 +220,46 @@
     }
 
     /* ********************************************************
+    * METHOD: checkOverlap
+    * PARAMS:
+    *   SKFVector sPos -> position of source
+    *   SKFVector tPos -> position of target
+    *   SKFVector sDims -> source dimensions
+    *   SKFVector tDims -> target dimensions
+    * RETURNS:
+    *  boolean, true for overlap, false for not
+    * ********************************************************/
+    public boolean checkOverlap(SKFVector sPos, SKFVector tPos, 
+    SKFVector sDims, SKFVector tDims)
+    {
+        boolean overlapX = false;
+        boolean overlapY = false;
+
+        /* get maxmost and minmost x values */
+        /* this is such a a terrible hack but */
+        /* it works fast */
+        float[] xVals = {sPos.x, sPos.x + sDims.x, tPos.x, tPos.x + tDims.x };
+        Arrays.sort(xVals);
+        float xMin = xVals[0];
+        float xMax = xVals[3];
+
+        /* this makes sense if you check out the following website: */
+        /* https://tinyurl.com/h58z28np */
+        overlapX = (sDims.x + tDims.x > xMax - xMin);
+
+        /* get max and min y values, compare overlap */
+        float[] yVals = {sPos.y, sPos.y + sDims.y, tPos.y, tPos.y + tDims.y };
+        Arrays.sort(yVals);
+        float yMin = yVals[0];
+        float yMax = yVals[3];
+
+        overlapY = (sDims.y + tDims.y > yMax - yMin);
+
+        /* if both true, return true */
+        return overlapX && overlapY;
+    }
+
+    /* ********************************************************
     * METHOD: physicsUpdate
     * PARAMS:
     *  N/A
@@ -273,17 +316,23 @@
                     /* get source indx */
                     int sIndx = sGroup.pBuffIndexes[j];
 
-                    /* get source entity entity */
-                    SKEntity sEnt = pObjBuffer[sIndx];
+                    /* get source entity and source vector */
+                    SKEntity  sEnt = pObjBuffer[sIndx];
+                    SKFVector sVec = vecBuffer[sIndx];
 
                     /* check all target ents */
                     for(int k = 0; k < sGroup.piSize; k++)
                     {
                         if(!(k == j)) /* AVOID SELF COLLISION */
                         {
-                            /* get target index and entity */
+                            /* get target index, entity and vector */
                             int tIndx = sGroup.pBuffIndexes[k];
-                            SKEntity tEnt = pObjBuffer[tIndx];
+                            SKEntity  tEnt = pObjBuffer[tIndx];
+                            SKFVector tVec = vecBuffer[tIndx];
+
+                            /* get collider data object */
+                            SKPhysicsProperties tPhysData = tEnt.physProperties;
+                            SKPhysicsProperties sPhysData = sEnt.physProperties;
                         }
 
                     } /* TARGET COMPARISON LOOP END */
@@ -291,7 +340,7 @@
                 } /* SOURCE COMPARISON LOOP END */
 
             } /* PGROUP NULL CHECK */
-            
+
         } /* LOOP ALL PGROUPS */
     }
 
