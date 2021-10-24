@@ -35,6 +35,9 @@
      /* time defs */
      public static final int DEFAULTPHYSINTERVAL = 7;
 
+     /* physics clamp defs */
+     public static final float PUSHFORCEMAX = 3f;
+
      /* update interval */
      public int updateInterval = DEFAULTPHYSINTERVAL;
      private long lastUpdateTime = System.currentTimeMillis( );
@@ -284,6 +287,18 @@
     }
 
     /* ********************************************************
+    * METHOD: canUpdate
+    * PARAMS:
+    *  N/A
+    * RETURNS:
+    *  boolean
+    * ********************************************************/
+    public boolean canUpdate( )
+    {
+        return System.currentTimeMillis( ) < lastUpdateTime + updateInterval;
+    }
+
+    /* ********************************************************
     * METHOD: physicsUpdate
     * PARAMS:
     *  N/A
@@ -313,7 +328,7 @@
             {
                 long timeDiff = System.currentTimeMillis( ) - lastUpdateTime + updateInterval;
                 long tMissed = timeDiff / updateInterval;
-                System.out.printf("[Missed %d updates at: %d]\n", System.currentTimeMillis( ), tMissed);
+                System.out.printf("WARNING: [Missed %d updates at: %d]\n", tMissed, System.currentTimeMillis( ));
             }
 
             /* update last exec time */
@@ -327,9 +342,16 @@
         generatePhysGroups( );
 
         /* thirdly, clear overlap buffer */
+        /* and push buffer */
         for(int i = 0; i < MAXPOBJS; i++)
         {
             overlapBuffer[i] = false;
+
+            /* if !null */
+            if(pushBuffer[i] != null)
+            {
+                pushBuffer[i].set(0, 0);
+            }
         }
 
         /* for all PGroups */
@@ -442,16 +464,18 @@
 
                                     /* dampen */
                                     pushBuffer[sIndx].scale(dampScale);
-                                }
-                                else
-                                {
-                                    /* else, set to 0 */
-                                    pushBuffer[sIndx].set(0, 0);
-                                }
-                            }
+
+                                    /* dampen target velocity by (sM / tM) */
+                                    pObjBuffer[tIndx].velocity.scale(sMass / tMass);
+
+                                } /* MASS DIFFERENCE CHECK END */
+                                
+                            } /* OVERLAP CHECK END */
+
                             /* set overlap buffer value */
                             overlapBuffer[sIndx] = overlap;
-                        }
+
+                        } /* SELF COLLISION CHECK END */
 
                     } /* TARGET COMPARISON LOOP END */
 
@@ -499,9 +523,6 @@
                     /* update vector buffer to accomadate for bounciness */
                     vecBuffer[i].add(scanE.velocity);
 
-                    /* update velocity based on push force */
-                    scanE.velocity.add(pushBuffer[i]);
-
                     /* debug output contd */
                     if(debugMode)
                     {
@@ -514,6 +535,25 @@
                     /* dampen velocity by 1 - ent drag */
                     scanE.velocity.scale(1.0f - scanE.physProperties.drag);
                 }
+
+                /* clamp push force */
+                if(pushBuffer[i].getMagnitude( ) > PUSHFORCEMAX)
+                {
+                    pushBuffer[i].normalize( );
+                    pushBuffer[i].scale(PUSHFORCEMAX);
+
+                    /* debug log it */
+                    if(debugMode)
+                    {
+                        System.out.printf(">>>Clamped push vector at %d\n", i);
+                    }
+                }
+
+                /* update velocity based on push force */
+                scanE.velocity.add(pushBuffer[i]);
+
+                /* update a-vec based on push force */
+                vecBuffer[i].add(pushBuffer[i]);
 
                 /* UPDATE ENTITY POSITION */
                 scanE.position = vecBuffer[i];

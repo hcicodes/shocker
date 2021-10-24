@@ -53,20 +53,45 @@ public class App {
 
         pHandler.addPhysObject(entity0);
         pHandler.addPhysObject(entity1);
-        pHandler.updateInterval = 2;
+        pHandler.updateInterval = 10;
+        //pHandler.debugMode = true;
+
+        float maxMag = 0;
 
         /* main render loop */
         while(true)
         {
             window.cameraPosition = new SKFVector(entity0.position.x - 250, entity0.position.y - 250);
 
-
+            
             window.clearBuffer( );
+            window.drawOval(500, 500, 10, 10, new Color(128, 128, 0));
 
-            SKFVector iVec = SKFInput.getInputAxis( );
-            iVec.scale(0.01f);
-            entity0.velocity.add(iVec);
+            if(pHandler.canUpdate())
+            {
+                SKFVector iVec = SKFInput.getInputAxis( );
+                iVec.scale(0.01f);
+                entity0.velocity.add(iVec);
+            }
+            
 
+            if(maxMag < entity0.velocity.getMagnitude( ))
+            {
+                maxMag = entity0.velocity.getMagnitude( );
+            }
+            
+            System.out.printf("MAGMAX: %f\tCMAG: %f\t", maxMag, entity0.velocity.getMagnitude( ));
+            for(int i = 0; i < entity0.velocity.getMagnitude() / 0.03; i++)
+            {
+                System.out.printf("=");
+            }
+            System.out.printf("\n");
+
+
+            if(SKFInput.isKeyDown('q'))
+            {
+                System.exit(0);
+            }
 
             pHandler.physicsUpdate( );
             entityHandler.render(window);
