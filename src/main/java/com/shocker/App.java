@@ -39,7 +39,7 @@ public class App {
         entity1.physProperties.bounciness = 0.1f;
         entity1.velocity.set(-1f, -1f);
         entity1.physProperties.drag = 0.01f;
-        entity1.physProperties.mass = 1;
+        entity1.physProperties.mass = 20;
 
         
         /* create entity handler and add entities */

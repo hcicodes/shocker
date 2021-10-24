@@ -4,6 +4,7 @@
  * DATE: 
  *  2021-10-20
  *  2021-10-23
+ *  2021-10-24
  * DEVS:
  *  Bailey Jia-Tao Brown
  * DESC:
@@ -12,6 +13,9 @@
  *  - Package defs
  *  - Imports
  *  - Buffer size defs
+ *  - Buffers
+ *  - Internal Classes
+ *  - Functions
  * 
  *********************************************************/
 
@@ -53,8 +57,8 @@
      public SKPhysicsGroup[] pGroups = new SKPhysicsGroup[MAXPGROUPS];
 
      /* pgroup bound threshold */
-     public static final int PGROUPTHRESHOLDX = 0x300;
-     public static final int PGROUPTHRESHOLDY = 0x300;
+     public static final int PGROUPTHRESHOLDX = 0x200;
+     public static final int PGROUPTHRESHOLDY = 0x200;
 
      /* internal physics group class */
     private final class SKPhysicsGroup
