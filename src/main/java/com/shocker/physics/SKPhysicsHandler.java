@@ -399,7 +399,7 @@
     * ********************************************************/
     public boolean canUpdate( )
     {
-        return System.currentTimeMillis( ) < lastUpdateTime + updateInterval;
+        return !(System.currentTimeMillis( ) < lastUpdateTime + updateInterval);
     }
 
     /* ********************************************************
