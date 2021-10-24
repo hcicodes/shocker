@@ -59,7 +59,7 @@
         /* set everything to default values */
         position = new SKFVector( );
         velocity = new SKFVector( );
-        physProperties = new SKPhysicsProperties(SKPhysicsProperties.BOUNDING_BOX);
+        physProperties = new SKPhysicsProperties( );
 
         renderFlags = ENTITY_NOTINIT;
         renderSet   = null;
@@ -78,7 +78,7 @@
         /* setup PHYSICS vars */
         position = new SKFVector(x, y);
         velocity = new SKFVector( );
-        physProperties = new SKPhysicsProperties(SKPhysicsProperties.BOUNDING_BOX);
+        physProperties = new SKPhysicsProperties( );
 
         /* setup RENDER vars */
         renderFlags = entityRenderFlags;
@@ -123,7 +123,7 @@
         /* setup PHYSICS vars */
         position = new SKFVector(x, y);
         velocity = new SKFVector( );
-        physProperties = new SKPhysicsProperties(SKPhysicsProperties.BOUNDING_BOX);
+        physProperties = new SKPhysicsProperties( );
 
         /* setup RENDER vars */
         renderFlags = flags;
