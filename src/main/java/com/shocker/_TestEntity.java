@@ -17,9 +17,7 @@ public class _TestEntity extends SKEntity
     {
         public void update(long time)
         {
-            SKFVector iVec = SKFInput.getInputAxis( );
-            iVec.scale(0.01f);
-            velocity.add(iVec);
+            
         }
 
         public void onCollide()

@@ -32,14 +32,19 @@
      public static final int MAXPGROUPS = 0x30;
      public static final int MAXPGSIZE  = 0x40;
 
+     /* time defs */
+     public static final int DEFAULTPHYSINTERVAL = 7;
+
      /* update interval */
-     public int updateInterval = 20;
+     public int updateInterval = DEFAULTPHYSINTERVAL;
      private long lastUpdateTime = System.currentTimeMillis( );
+     private long missedUpdates = 0;
 
      /* buffers */
-     public boolean[] overlapBuffer  = new boolean[MAXPOBJS];
-     public SKEntity[] pObjBuffer    = new SKEntity[MAXPOBJS];
-     public SKFVector[] vecBuffer    = new SKFVector[MAXPOBJS];
+     public boolean[] overlapBuffer  = new boolean[MAXPOBJS];    /* check if pobj is overlapping */
+     public SKEntity[] pObjBuffer    = new SKEntity[MAXPOBJS];   /* pobj array */
+     public SKFVector[] vecBuffer    = new SKFVector[MAXPOBJS];  /* a-vector array */
+     public SKFVector[] pushBuffer   = new SKFVector[MAXPOBJS];  /* opbj overlap push vector */
      public SKPhysicsGroup[] pGroups = new SKPhysicsGroup[MAXPGROUPS];
 
      /* pgroup bound threshold */
@@ -71,6 +76,18 @@
     }
 
     /* ********************************************************
+    * METHOD: getMissedUpdateCount
+    * PARAMS:
+    *  N/A
+    * RETURNS:
+    *  long, missed update count
+    * ********************************************************/
+    public long getMissedUpdateCount( )
+    {
+        return missedUpdates;
+    }
+
+    /* ********************************************************
     * METHOD: addPhysObject
     * PARAMS:
     *  SKEntity pObj -> entity to add
@@ -88,8 +105,9 @@
                 /* set buffer object */
                pObjBuffer[i] = pObj;
 
-               /* init vector object */
-               vecBuffer[i] = new SKFVector( );
+               /* init vector objects */
+               vecBuffer[i] =  new SKFVector( );
+               pushBuffer[i] = new SKFVector( );
 
                /* end */
                if(debugMode)
@@ -116,6 +134,7 @@
     {
         pObjBuffer[pHndl] = null;
         vecBuffer[pHndl]  = null;
+        pushBuffer[pHndl] = null;
 
         if(debugMode)
         {
@@ -289,6 +308,14 @@
         }
         else
         {
+            /* if missed update and debug mode */
+            if(System.currentTimeMillis( ) > lastUpdateTime + updateInterval && debugMode)
+            {
+                long timeDiff = System.currentTimeMillis( ) - lastUpdateTime + updateInterval;
+                long tMissed = timeDiff / updateInterval;
+                System.out.printf("[Missed %d updates at: %d]\n", System.currentTimeMillis( ), tMissed);
+            }
+
             /* update last exec time */
             lastUpdateTime = System.currentTimeMillis( );
         }
@@ -395,6 +422,33 @@
                                 tEnt.position.x, tEnt.position.y);
                             }
 
+                            /* if overlapping, compare masses */
+                            if(overlap)
+                            {
+                                /* get difference in mass */
+                                float dMass = sEnt.physProperties.mass - tEnt.physProperties.mass;
+
+                                /* if target object is heavier and is !static */
+                                if(dMass < 0 && !sEnt.physProperties.isStatic)
+                                {
+                                    /* set push force to heavier object */
+                                    pushBuffer[sIndx].set(tEnt.velocity.x, tEnt.velocity.y);
+
+                                    /* calculate dampen amount by: */
+                                    /* (tM - sM) / tM */
+                                    float tMass = tEnt.physProperties.mass;
+                                    float sMass = sEnt.physProperties.mass;
+                                    float dampScale = (tMass - sMass) / tMass;
+
+                                    /* dampen */
+                                    pushBuffer[sIndx].scale(dampScale);
+                                }
+                                else
+                                {
+                                    /* else, set to 0 */
+                                    pushBuffer[sIndx].set(0, 0);
+                                }
+                            }
                             /* set overlap buffer value */
                             overlapBuffer[sIndx] = overlap;
                         }
@@ -444,6 +498,9 @@
 
                     /* update vector buffer to accomadate for bounciness */
                     vecBuffer[i].add(scanE.velocity);
+
+                    /* update velocity based on push force */
+                    scanE.velocity.add(pushBuffer[i]);
 
                     /* debug output contd */
                     if(debugMode)

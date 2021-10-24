@@ -27,9 +27,10 @@ public class App {
         entity0.physProperties.setBoundingBox(0, 0, 20, 20);
 
         /* setup entity0 physics properties */
-        entity0.physProperties.bounciness = 0.5f;
+        entity0.physProperties.bounciness = 0.1f;
         entity0.velocity.set(1f, 1f);
-        entity0.physProperties.drag = 0.005f;
+        entity0.physProperties.drag = 0.01f;
+        entity0.physProperties.mass = 5;
 
         /* create second entity object */
         _TestEntity entity1 = new _TestEntity( );
@@ -37,8 +38,10 @@ public class App {
         entity1.physProperties.setBoundingBox(0, 0, 20, 20);
         entity1.physProperties.bounciness = 0.1f;
         entity1.velocity.set(-1f, -1f);
-        entity1.physProperties.drag = 0.005f;
+        entity1.physProperties.drag = 0.01f;
+        entity1.physProperties.mass = 3;
 
+        
         /* create entity handler and add entities */
         SKEntityHandler entityHandler = new SKEntityHandler( );
         entityHandler.addEntity(entity0);
@@ -46,16 +49,24 @@ public class App {
 
         /* create physics handler */
         SKPhysicsHandler pHandler = new SKPhysicsHandler( );
-        pHandler.debugMode = true;
+        //pHandler.debugMode = true;
 
         pHandler.addPhysObject(entity0);
         pHandler.addPhysObject(entity1);
-        pHandler.updateInterval = 5;
+        pHandler.updateInterval = 2;
 
         /* main render loop */
         while(true)
         {
+            window.cameraPosition = new SKFVector(entity0.position.x - 250, entity0.position.y - 250);
+
+
             window.clearBuffer( );
+
+            SKFVector iVec = SKFInput.getInputAxis( );
+            iVec.scale(0.01f);
+            entity0.velocity.add(iVec);
+
 
             pHandler.physicsUpdate( );
             entityHandler.render(window);
