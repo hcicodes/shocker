@@ -30,7 +30,7 @@ public class App {
         entity0.physProperties.bounciness = 0.1f;
         entity0.velocity.set(1f, 1f);
         entity0.physProperties.drag = 0.01f;
-        entity0.physProperties.mass = 10;
+        entity0.physProperties.mass = 2;
 
         /* create second entity object */
         _TestEntity entity1 = new _TestEntity( );
@@ -39,7 +39,7 @@ public class App {
         entity1.physProperties.bounciness = 0.1f;
         entity1.velocity.set(-1f, -1f);
         entity1.physProperties.drag = 0.01f;
-        entity1.physProperties.mass = 5;
+        entity1.physProperties.mass = 1;
 
         
         /* create entity handler and add entities */
@@ -62,15 +62,7 @@ public class App {
             window.cameraPosition = new SKFVector(entity0.position.x - 250, entity0.position.y - 250);
             window.clearBuffer( );
 
-            for(int i = 0; i < 10; i++)
-            {
-                SKFVector p0 = new SKFVector(i * 500, 0);
-                SKFVector p1 = new SKFVector(i * 500, 500 * 10);
-                SKFVector p2 = new SKFVector(0, i * 500);
-                SKFVector p3 = new SKFVector(500 * 100, i * 500);
-                window.drawLine(p0, p1, new Color(0, 0, 255));
-                window.drawLine(p2, p3, new Color(0, 0, 255));
-            }
+            pHandler.debugDrawPgroupBounds(window);
 
             window.drawOval(500, 500, 10, 10, new Color(128, 128, 0));
 

@@ -18,6 +18,7 @@
  package com.shocker.physics; /* package name */
 
  import java.util.Arrays; /* array sorting function */
+ import java.awt.*; /* color class */
 
  import com.shocker.SKF.*;    /* all framework classes */
  import com.shocker.entity.*; /* all entity classes    */
@@ -166,86 +167,68 @@
     * PARAMS:
     *  int x -> object x pos
     *  int y -> object y pos
+    *  int w -> object width
+    *  int h -> object height
     * RETURNS:
-    *  SKFVector, pgroup position
+    *  int[][], pgroup position, index (0,0) holds phys group
+    * count.
     * ********************************************************/
-    public SKFVector findPhysGroup(int x, int y)
+    public int[][] findPhysGroup(int x, int y, int w, int h)
     {
-        return new SKFVector(x / PGROUPTHRESHOLDX, y / PGROUPTHRESHOLDY);
-    }
+        int[][] pVec = new int[5][2];
+        int vecCount = 1;
+        
+        /* get max and min vertexes of bounding box */
+        int groupXmin = x / PGROUPTHRESHOLDX;
+        int groupYmin = y / PGROUPTHRESHOLDY;
+        int groupXmax = (x + w) / PGROUPTHRESHOLDX;
+        int groupYmax = (y + h) / PGROUPTHRESHOLDY;
 
-    /* ********************************************************
-    * METHOD: findPhysGroups
-    * PARAMS:
-    *  int x -> object x pos
-    *  int y -> object y pos
-    *  int w -> object w
-    *  int h -> object h
-    * RETURNS:
-    *  SKFVector[], array of pgroup position
-    * ********************************************************/
-    public SKFVector[] findPhysGroups(int x, int y, int w, int h)
-    {
-        /* get max x & y vals */
-        int x2 = x + w;
-        int y2 = y + h;
+        /* get booleans for quick comparison */
+        boolean xDiff = groupXmax != groupXmin;
+        boolean yDiff = groupYmax != groupYmin;
 
-        SKFVector p0 = findPhysGroup(x, y);   /* pgroup of bl corner */
-        SKFVector p1 = findPhysGroup(x, y2);  /* pgroup of tl corner */
-        SKFVector p2 = findPhysGroup(x2, y2); /* pgroup of tr corner */
-        SKFVector p3 = findPhysGroup(x2, y);  /* pgroup of bl corner */
+        /* add and avoid repeats */
+        pVec[vecCount][0] = groupXmin;
+        pVec[vecCount][1] = groupYmin;
+        vecCount++;
 
-        /* create temp vector */
-        SKFVector[] tempVecArr = { p0, p1, p2, p3 };
-        SKFVector[] tempElVec = new SKFVector[4];
-        SKFVector[] rVecArr;
-
-        /* eliminate repeated coords */
-        for(int i = 0; i < 4; i++) /* for every vector */
+        /* this is such a damn hack job, but it works */
+        if(xDiff)
         {
-            for(int j = 0; j < 4; j++) /* for every other vector */
-            {
-                if(i != j && tempVecArr[i] != null && tempVecArr[j] != null) /* avoid collision */
-                {
-                    /* get vectors */
-                    SKFVector v1 = tempVecArr[i];
-                    SKFVector v2 = tempVecArr[j];
-
-                    /* if same, set second vector to null */
-                    if((int)v1.x == (int)v2.x && (int)v1.y == (int)v2.y)
-                    {
-                        v2 = null;
-                    }
-                }
-            }
-        } /* END COMPARE LOOP */
-
-        /* fill tempElVec */
-        int vecCount = 0;
-        for(int i = 0; i < 4; i++)
+            pVec[vecCount][0] = groupXmax;
+            pVec[vecCount][1] = groupYmin;
+            vecCount++;
+        }
+        if(yDiff)
         {
-            if(tempVecArr[i] != null)
-            {
-                tempElVec[vecCount++] = tempVecArr[i];
-            }
+            pVec[vecCount][0] = groupXmin;
+            pVec[vecCount][1] = groupYmax;
+            vecCount++;
+        }
+        if(xDiff && yDiff)
+        {
+            pVec[vecCount][0] = groupXmax;
+            pVec[vecCount][1] = groupYmax;
+            vecCount++;
         }
 
-        /* init rVecArr */
-        rVecArr = new SKFVector[vecCount];
+        /* update array read size */
+        pVec[0][0] = vecCount - 1;
 
-        /* debug log */
+        /* debug output */
         if(debugMode)
         {
-            System.out.printf(">PGROUP COUNT: %d\n", vecCount);
+            System.out.printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            System.out.printf("Create pgroups of size: %d\nContents are:\n", vecCount - 1);
+            for(int i = 0; i < vecCount - 1; i++)
+            {
+                System.out.printf("\t(%d, %d)\n", pVec[i + 1][0], pVec[i + 1][1]);
+            }
+            System.out.printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
 
-        /* fill and return */
-        for(int i = 0; i < vecCount; i++)
-        {
-            rVecArr[i] = tempElVec[i];
-        }
-
-        return rVecArr;
+        return pVec;
     }
 
     /* ********************************************************
@@ -271,13 +254,13 @@
                 float ch = (scanPObj.physProperties.getBoundingBox())[3];
 
                 /* get pgroup numbers */
-                SKFVector[] pNums = findPhysGroups((int)cx, (int)cy, (int)cw, (int)ch);
+                int[][] pNums = findPhysGroup((int)cx, (int)cy, (int)cw, (int)ch);
                 
                 /* for all pNums */
-                for(int k = 0; k < pNums.length; k++)
+                for(int k = 0; k < pNums[0][0]; k++)
                 {
-                    int pNumX = (int)pNums[k].x;
-                    int pNumY = (int)pNums[k].y;
+                    int pNumX = pNums[k + 1][0];
+                    int pNumY = pNums[k + 1][1];
 
                     boolean foundGroup = false;
 
@@ -401,6 +384,30 @@
     }
 
     /* ********************************************************
+    * METHOD: debugDrawPgroupBounds
+    * PARAMS:
+    *  SKFWindow target -> window to render to
+    * RETURNS:
+    *  void
+    * ********************************************************/
+    public void debugDrawPgroupBounds(SKFWindow target)
+    {
+        int startX = -50 * PGROUPTHRESHOLDX;
+        int endX   =  50 * PGROUPTHRESHOLDX;
+        int startY = -50 * PGROUPTHRESHOLDY;
+        int endY   =  50 * PGROUPTHRESHOLDY;
+
+        /* draw horizontal lines */
+        for(int i = -50; i < 50; i++)
+        {
+            int drawY = i * PGROUPTHRESHOLDY;
+            int drawX = i * PGROUPTHRESHOLDX;
+            target.drawLine(startX, drawY, endX, drawY, new Color(0, 64, 255));
+            target.drawLine(drawX, startY, drawX, endY, new Color(0, 64, 255));
+        }
+    }
+
+    /* ********************************************************
     * METHOD: physicsUpdate
     * PARAMS:
     *  N/A
@@ -426,11 +433,22 @@
         else
         {
             /* if missed update and debug mode */
-            if(System.currentTimeMillis( ) > lastUpdateTime + updateInterval && debugMode)
+            if(System.currentTimeMillis( ) > lastUpdateTime + updateInterval)
             {
                 long timeDiff = System.currentTimeMillis( ) - lastUpdateTime + updateInterval;
                 long tMissed = timeDiff / updateInterval;
-                System.out.printf("WARNING: [Missed %d updates at: %d]\n", tMissed, System.currentTimeMillis( ));
+
+                if(debugMode)
+                {
+                    System.out.printf("WARNING: [Missed %d updates at: %d]\n", tMissed, System.currentTimeMillis( ));
+                }
+
+                missedUpdates += tMissed;
+
+                if(tMissed >= 10)
+                {
+                    System.err.printf("SEVERE WARNING: <MISSED %d UPDATES> GAME IS LAGGING SEVERELY!\n", tMissed);
+                }
             }
 
             /* update last exec time */
@@ -504,7 +522,8 @@
                     /* check all target ents */
                     for(int k = 0; k < sGroup.piSize; k++)
                     {
-                        if(!(k == j)) /* AVOID SELF COLLISION */
+                        /* AVOID SELF COLLISION AND ALSO CHECKS FOR SAME OBJECT POINTER */
+                        if(!(k == j) && !(sEnt == pObjBuffer[sGroup.pBuffIndexes[k]]))
                         {
                             /* get target index and entity */
                             int tIndx = sGroup.pBuffIndexes[k];
@@ -539,6 +558,16 @@
                             /* debug output */
                             if(overlap && debugMode)
                             {
+                                int pGroupCount = 0;
+                                for(int itr = 0; itr < MAXPGROUPS; itr++)
+                                {
+                                    if(pGroups[itr] != null)
+                                    {
+                                        pGroupCount++;
+                                    }
+                                }
+
+                                System.out.printf("CURRENT PGROUP: [%d]/[%d]\n", i, pGroupCount);
                                 System.out.printf("PHYSICS OVERLAP BETWEEN:\n");
                                 System.out.printf("\tPOBJ[%d] at (%f , %f)\n", sIndx,
                                 sEnt.position.x, sEnt.position.y);
@@ -556,7 +585,11 @@
                                 if(dMass < 0 && !sEnt.physProperties.isStatic)
                                 {
                                     /* set push force to heavier object */
-                                    pushBuffer[sIndx].set(tEnt.velocity.x, tEnt.velocity.y);
+                                    /* only if 0 */
+                                    if(pushBuffer[sIndx].x == 0 && pushBuffer[sIndx].y == 0)
+                                    {
+                                        pushBuffer[sIndx].set(tEnt.velocity.x, tEnt.velocity.y);
+                                    }
 
                                     /* calculate dampen amount by: */
                                     /* (tM - sM) / tM */
@@ -574,9 +607,11 @@
                                 
                             } /* OVERLAP CHECK END */
 
-                            /* set overlap buffer value */
-                            overlapBuffer[sIndx] = overlap;
-
+                            /* set overlap buffer value only if false */
+                            if(!overlapBuffer[sIndx])
+                            {
+                                overlapBuffer[sIndx] = overlap;
+                            }
                         } /* SELF COLLISION CHECK END */
 
                     } /* TARGET COMPARISON LOOP END */
@@ -625,12 +660,38 @@
                     /* update vector buffer to accomadate for bounciness */
                     vecBuffer[i].add(scanE.velocity);
 
+                    /* clamp push force */
+                    if(pushBuffer[i].getMagnitude( ) > PUSHFORCEMAX)
+                    {
+                        pushBuffer[i].normalize( );
+                        pushBuffer[i].scale(PUSHFORCEMAX);
+
+                        /* debug log it */
+                        if(debugMode)
+                        {
+                            System.out.printf(">>>Clamped push vector at %d\n", i);
+                        }
+                    }
+
+                    /* update velocity based on push force */
+                    scanE.velocity.add(pushBuffer[i]);
+
+                    /* update a-vec based on push force */
+                    vecBuffer[i].add(pushBuffer[i]);
+
+                    /* UPDATE ENTITY POSITION */
+                    scanE.position = vecBuffer[i];
+
+                    /* EXECUTE ENTITY UPDATE CALLBACK */
+                    scanE.update(System.currentTimeMillis( ));
+
                     /* debug output contd */
                     if(debugMode)
                     {
                         System.out.printf(">>>Velocity after: (%f, %f)\n", scanE.velocity.x, scanE.velocity.y);
                     }
                 }
+
                 else
                 {
                     /* DO NOT UPDATE DRAG UPON BOUNCE */
@@ -638,30 +699,7 @@
                     scanE.velocity.scale(1.0f - scanE.physProperties.drag);
                 }
 
-                /* clamp push force */
-                if(pushBuffer[i].getMagnitude( ) > PUSHFORCEMAX)
-                {
-                    pushBuffer[i].normalize( );
-                    pushBuffer[i].scale(PUSHFORCEMAX);
-
-                    /* debug log it */
-                    if(debugMode)
-                    {
-                        System.out.printf(">>>Clamped push vector at %d\n", i);
-                    }
-                }
-
-                /* update velocity based on push force */
-                scanE.velocity.add(pushBuffer[i]);
-
-                /* update a-vec based on push force */
-                vecBuffer[i].add(pushBuffer[i]);
-
-                /* UPDATE ENTITY POSITION */
-                scanE.position = vecBuffer[i];
-
-                /* EXECUTE ENTITY UPDATE CALLBACK */
-                scanE.update(System.currentTimeMillis( ));
+                
             } /* END POBJ NULL CHECK */
 
         } /* END POBJ LOOP */
