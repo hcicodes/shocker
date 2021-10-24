@@ -36,31 +36,6 @@
      private float boundingBoxW = 0;
      private float boundingBoxH = 0;
 
-     /* bounding circle params */
-     private float boundingCircleX = 0;
-     private float boundingCircleY = 0;
-     private float boundingCircleR = 0;
-
-     /* collision enum */
-     public static final int BOUNDING_NONE   = 0;
-     public static final int BOUNDING_BOX    = 1;
-     public static final int BOUNDING_CIRCLE = 2;
-     
-     /* collision flags */
-     public int boundingFlags = BOUNDING_NONE;
-
-    /**================================================================
-     * METHOD: ctor
-     * PARAMS:
-     *  int bFlags -> set bounding flags
-     * RETURNS:
-     *  N/A
-     **================================================================*/
-    public SKPhysicsProperties(int bFlags)
-    {
-        boundingFlags = bFlags;
-    }
-
     /**================================================================
      * METHOD: setPhysicsProperties
      * PARAMS:
@@ -114,43 +89,6 @@
         rFloatArr[1] = boundingBoxY;
         rFloatArr[2] = boundingBoxW;
         rFloatArr[3] = boundingBoxH;
-
-        return rFloatArr;
-    }
-
-    /**================================================================
-     * METHOD: setBoundingCircle
-     * PARAMS:
-     *  float cx -> circle x offset
-     *  float cy -> circle y offset
-     *  float cr -> circle radius
-     * RETURNS:
-     *  void
-     **================================================================*/
-    public void setBoundingCircle(float cx, float cy, float cr)
-    {
-        boundingCircleX = cx;
-        boundingCircleY = cy;
-        boundingCircleR = cr;
-    }
-
-    /**================================================================
-     * METHOD: getBoundingCircle
-     * PARAMS:
-     *  N/A
-     * RETURNS:
-     *  float[] of size 3
-     *  index 0 -> x
-     *  index 1 -> h
-     *  index 2 -> r
-     **================================================================*/
-    public float[] getBoundingCircle( )
-    {
-        /* create float array and fill */
-        float[] rFloatArr = new float[3];
-        rFloatArr[0] = boundingCircleX;
-        rFloatArr[1] = boundingCircleY;
-        rFloatArr[2] = boundingCircleR;
 
         return rFloatArr;
     }
