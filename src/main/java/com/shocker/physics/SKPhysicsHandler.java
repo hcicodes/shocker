@@ -45,6 +45,7 @@
      private long missedUpdates = 0;
 
      /* buffers */
+     public boolean[] aVecUpdateBuff = new boolean[MAXPOBJS];    /* check if avec has been updated */
      public boolean[] overlapBuffer  = new boolean[MAXPOBJS];    /* check if pobj is overlapping */
      public SKEntity[] pObjBuffer    = new SKEntity[MAXPOBJS];   /* pobj array */
      public SKFVector[] vecBuffer    = new SKFVector[MAXPOBJS];  /* a-vector array */
@@ -52,8 +53,8 @@
      public SKPhysicsGroup[] pGroups = new SKPhysicsGroup[MAXPGROUPS];
 
      /* pgroup bound threshold */
-     public static final int PGROUPTHRESHOLDX = 500;
-     public static final int PGROUPTHRESHOLDY = 500;
+     public static final int PGROUPTHRESHOLDX = 0x300;
+     public static final int PGROUPTHRESHOLDY = 0x300;
 
      /* internal physics group class */
     private final class SKPhysicsGroup
@@ -465,7 +466,8 @@
         /* and push buffer */
         for(int i = 0; i < MAXPOBJS; i++)
         {
-            overlapBuffer[i] = false;
+            overlapBuffer[i]  = false; /* clear overlap buffer */
+            aVecUpdateBuff[i] = false; /* clear avec update buffer */
 
             /* if !null */
             if(pushBuffer[i] != null)
@@ -496,10 +498,16 @@
                     /* remember, vBuff[i] corresponds to pOBuff[i]*/
                     SKEntity scannedEnt = pObjBuffer[vBufferIndex];
 
-                    /* set corresponding vector to scanEnt position */
-                    /* and then update by velocity */
-                    vecBuffer[vBufferIndex] = scannedEnt.position;
-                    vecBuffer[vBufferIndex].add(scannedEnt.velocity);
+                    /* if avec has not been calculated */
+                    if(!aVecUpdateBuff[vBufferIndex])
+                    {
+                        /* set corresponding vector to scanEnt position */
+                        /* and then update by velocity */
+                        vecBuffer[vBufferIndex] = scannedEnt.position;
+                        vecBuffer[vBufferIndex].add(scannedEnt.velocity);
+                        aVecUpdateBuff[vBufferIndex] = true;
+                    }
+                    
 
                 } /* COMPLETED GENERATING A-VECTORS OF ALL POBJS IN PGROUP */
 
