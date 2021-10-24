@@ -601,19 +601,20 @@
                                     if(pushBuffer[sIndx].x == 0 && pushBuffer[sIndx].y == 0)
                                     {
                                         pushBuffer[sIndx].set(tEnt.velocity.x, tEnt.velocity.y);
-                                    }
 
-                                    /* calculate dampen amount by: */
-                                    /* (tM - sM) / tM */
-                                    float tMass = tEnt.physProperties.mass;
-                                    float sMass = sEnt.physProperties.mass;
-                                    float dampScale = (tMass - sMass) / tMass;
+                                        /* calculate dampen amount by: */
+                                        /* (tM - sM) / tM */
+                                        float tMass = tEnt.physProperties.mass;
+                                        float sMass = sEnt.physProperties.mass;
+                                        float dampScale = (tMass - sMass) / tMass;
 
-                                    /* dampen */
-                                    pushBuffer[sIndx].scale(dampScale);
+                                        /* dampen */
+                                        pushBuffer[sIndx].scale(dampScale);
 
-                                    /* dampen target velocity by (sM / tM) */
-                                    pObjBuffer[tIndx].velocity.scale(sMass / tMass);
+                                        /* dampen target velocity by (sM / tM) */
+                                        pObjBuffer[tIndx].velocity.scale(sMass / tMass);
+
+                                    } /* ONLY PUSH ONCE CHECK */
 
                                 } /* MASS DIFFERENCE CHECK END */
                                 

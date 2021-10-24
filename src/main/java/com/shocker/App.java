@@ -25,21 +25,13 @@ public class App {
         _TestEntity entity0 = new _TestEntity( );
         entity0.init(250, 250, SKEntity.ENTITY_RENDERSET, 1 , renderSet0, null, 0, 0);
         entity0.physProperties.setBoundingBox(0, 0, 20, 20);
-
-        /* setup entity0 physics properties */
-        entity0.physProperties.bounciness = 0.1f;
-        entity0.velocity.set(1f, 1f);
-        entity0.physProperties.drag = 0.01f;
-        entity0.physProperties.mass = 2;
+        entity0.physProperties.setPhysicsProperties(5, 0.01f, 0.1f);
 
         /* create second entity object */
         _TestEntity entity1 = new _TestEntity( );
         entity1.init(400, 400, SKEntity.ENTITY_RENDERSET, 1, renderSet1, null, 0, 0);
         entity1.physProperties.setBoundingBox(0, 0, 20, 20);
-        entity1.physProperties.bounciness = 0.1f;
-        entity1.velocity.set(-1f, -1f);
-        entity1.physProperties.drag = 0.01f;
-        entity1.physProperties.mass = 20;
+        entity1.physProperties.setPhysicsProperties(2, 0.01f, 0.1f);
 
         
         /* create entity handler and add entities */
