@@ -162,6 +162,93 @@
     }
 
     /* ********************************************************
+    * METHOD: findPhysGroup
+    * PARAMS:
+    *  int x -> object x pos
+    *  int y -> object y pos
+    * RETURNS:
+    *  SKFVector, pgroup position
+    * ********************************************************/
+    public SKFVector findPhysGroup(int x, int y)
+    {
+        return new SKFVector(x / PGROUPTHRESHOLDX, y / PGROUPTHRESHOLDY);
+    }
+
+    /* ********************************************************
+    * METHOD: findPhysGroups
+    * PARAMS:
+    *  int x -> object x pos
+    *  int y -> object y pos
+    *  int w -> object w
+    *  int h -> object h
+    * RETURNS:
+    *  SKFVector[], array of pgroup position
+    * ********************************************************/
+    public SKFVector[] findPhysGroups(int x, int y, int w, int h)
+    {
+        /* get max x & y vals */
+        int x2 = x + w;
+        int y2 = y + h;
+
+        SKFVector p0 = findPhysGroup(x, y);   /* pgroup of bl corner */
+        SKFVector p1 = findPhysGroup(x, y2);  /* pgroup of tl corner */
+        SKFVector p2 = findPhysGroup(x2, y2); /* pgroup of tr corner */
+        SKFVector p3 = findPhysGroup(x2, y);  /* pgroup of bl corner */
+
+        /* create temp vector */
+        SKFVector[] tempVecArr = { p0, p1, p2, p3 };
+        SKFVector[] tempElVec = new SKFVector[4];
+        SKFVector[] rVecArr;
+
+        /* eliminate repeated coords */
+        for(int i = 0; i < 4; i++) /* for every vector */
+        {
+            for(int j = 0; j < 4; j++) /* for every other vector */
+            {
+                if(i != j && tempVecArr[i] != null && tempVecArr[j] != null) /* avoid collision */
+                {
+                    /* get vectors */
+                    SKFVector v1 = tempVecArr[i];
+                    SKFVector v2 = tempVecArr[j];
+
+                    /* if same, set second vector to null */
+                    if((int)v1.x == (int)v2.x && (int)v1.y == (int)v2.y)
+                    {
+                        v2 = null;
+                    }
+                }
+            }
+        } /* END COMPARE LOOP */
+
+        /* fill tempElVec */
+        int vecCount = 0;
+        for(int i = 0; i < 4; i++)
+        {
+            if(tempVecArr[i] != null)
+            {
+                tempElVec[vecCount++] = tempVecArr[i];
+            }
+        }
+
+        /* init rVecArr */
+        rVecArr = new SKFVector[vecCount];
+
+        /* debug log */
+        if(debugMode)
+        {
+            System.out.printf(">PGROUP COUNT: %d\n", vecCount);
+        }
+
+        /* fill and return */
+        for(int i = 0; i < vecCount; i++)
+        {
+            rVecArr[i] = tempElVec[i];
+        }
+
+        return rVecArr;
+    }
+
+    /* ********************************************************
     * METHOD: generatePhysGroups
     * PARAMS:
     *  N/A
@@ -177,44 +264,59 @@
             {
                 SKEntity scanPObj = pObjBuffer[i]; /* actively scanned PObj */
 
-                /* get pGroup number */
-                int pNumX = (int)scanPObj.position.x / PGROUPTHRESHOLDX;
-                int pNumY = (int)scanPObj.position.y / PGROUPTHRESHOLDY;
+                /* get entity dimensions */
+                float cx = scanPObj.position.x - (scanPObj.physProperties.getBoundingBox())[0];
+                float cy = scanPObj.position.y - (scanPObj.physProperties.getBoundingBox())[1];
+                float cw = (scanPObj.physProperties.getBoundingBox())[2];
+                float ch = (scanPObj.physProperties.getBoundingBox())[3];
 
-                boolean foundGroup = false;
-
-                /* for every PGroup */
-                for(int j = 0; j < MAXPGROUPS; j++)
+                /* get pgroup numbers */
+                SKFVector[] pNums = findPhysGroups((int)cx, (int)cy, (int)cw, (int)ch);
+                
+                /* for all pNums */
+                for(int k = 0; k < pNums.length; k++)
                 {
-                    /* if pGroup is active */
-                    /* and pNums are matching */
-                    if(pGroups[j] != null &&
-                       pGroups[j].gX == pNumX &&
-                       pGroups[j].gY == pNumY)
-                    {
-                        /* add and break for loop */
-                        pGroups[j].addIndex(i);
-                        foundGroup = true;
-                        break;
-                    }
-                }
+                    int pNumX = (int)pNums[k].x;
+                    int pNumY = (int)pNums[k].y;
 
-                /* when exit loop, check if group found */
-                /* if not, create group */
-                if(!foundGroup)
-                {
-                    /* loop thru pGroups to find empty, create and add */
+                    boolean foundGroup = false;
+
+                    /* for every PGroup */
                     for(int j = 0; j < MAXPGROUPS; j++)
                     {
-                        if(pGroups[j] == null)
+                        /* if pGroup is active */
+                        /* and pNums are matching */
+                        if(pGroups[j] != null &&
+                        pGroups[j].gX == pNumX &&
+                        pGroups[j].gY == pNumY)
                         {
-                            /* create group, add and break */
-                            pGroups[j] = new SKPhysicsGroup(pNumX, pNumY);
+                            /* add and break for loop */
                             pGroups[j].addIndex(i);
+                            foundGroup = true;
                             break;
                         }
                     }
-                } /* END PGROUP CREATION LOOP */
+
+                    /* when exit loop, check if group found */
+                    /* if not, create group */
+                    if(!foundGroup)
+                    {
+                        /* loop thru pGroups to find empty, create and add */
+                        for(int j = 0; j < MAXPGROUPS; j++)
+                        {
+                            if(pGroups[j] == null)
+                            {
+                                /* create group, add and break */
+                                pGroups[j] = new SKPhysicsGroup(pNumX, pNumY);
+                                pGroups[j].addIndex(i);
+                                break;
+                            }
+                        }
+                    } /* END PGROUP CREATION LOOP */
+
+                } /* END PNUM LOOP */
+                
+
             } /* END POBJ NULL CHECK */
         } /* END POBJ CHECK LOOP */
 
