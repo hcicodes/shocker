@@ -43,7 +43,7 @@ public class App {
 
         pHandler.addPhysObject(entity0);
         pHandler.addPhysObject(entity1);
-        pHandler.updateInterval = 10;
+        pHandler.updateInterval = 5;
         //pHandler.debugMode = true;
 
         pHandler.setPgroupThreshold(800, 800);
@@ -58,10 +58,10 @@ public class App {
 
             window.drawOval(500, 500, 10, 10, new Color(128, 128, 0));
 
-            if(pHandler.canUpdate())
+            if(pHandler.canUpdate( ))
             {
                 SKFVector iVec = SKFInput.getInputAxis( );
-                iVec.scale(0.01f);
+                iVec.scale(0.05f);
                 entity0.velocity.add(iVec);
             }
             if(SKFInput.isKeyDown('q'))
@@ -76,6 +76,16 @@ public class App {
             {
                 pHandler.removePhysObject(1);
             }
+
+            try
+            {
+               // Thread.sleep(5);
+            }
+            catch(Exception e)
+            {
+
+            }
+            
 
             window.flipBuffer( );
         }

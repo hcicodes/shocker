@@ -60,6 +60,9 @@
      private static int PGROUPTHRESHOLDX = 0x200;
      private static int PGROUPTHRESHOLDY = 0x200;
 
+     /* time defs */
+     public static final int UPDATEMISSTHRESHOLD = 7;
+
      /* internal physics group class */
     private final class SKPhysicsGroup
     {
@@ -421,8 +424,18 @@
         {
             int drawY = i * PGROUPTHRESHOLDY;
             int drawX = i * PGROUPTHRESHOLDX;
-            target.drawLine(startX, drawY, endX, drawY, new Color(0, 64, 255));
-            target.drawLine(drawX, startY, drawX, endY, new Color(0, 64, 255));
+
+            if(i == 0)
+            {
+                target.drawLine(startX, drawY, endX, drawY, new Color(255, 64, 0));
+                target.drawLine(drawX, startY, drawX, endY, new Color(255, 64, 0));
+            }
+            else
+            {
+                target.drawLine(startX, drawY, endX, drawY, new Color(0, 64, 255));
+                target.drawLine(drawX, startY, drawX, endY, new Color(0, 64, 255));
+            }
+            
         }
     }
 
@@ -464,9 +477,9 @@
 
                 missedUpdates += tMissed;
 
-                if(tMissed >= 10)
+                if(tMissed >= UPDATEMISSTHRESHOLD)
                 {
-                    System.err.printf("SEVERE WARNING: <MISSED %d UPDATES> GAME IS LAGGING SEVERELY!\n", tMissed);
+                    System.err.printf("SEVERE WARNING: <MISSED %d UPDATES> ENGINE IS BEING PUSHED TO IT'S LIMITS!\n", tMissed);
                 }
             }
 
