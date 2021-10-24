@@ -25,14 +25,13 @@ public class App {
         _TestEntity entity0 = new _TestEntity( );
         entity0.init(250, 250, SKEntity.ENTITY_RENDERSET, 1 , renderSet0, null, 0, 0);
         entity0.physProperties.setBoundingBox(0, 0, 20, 20);
-        entity0.physProperties.setPhysicsProperties(5, 0.01f, 0.1f);
+        entity0.physProperties.setPhysicsProperties(100, 0.01f, 0.1f);
 
         /* create second entity object */
         _TestEntity entity1 = new _TestEntity( );
         entity1.init(400, 400, SKEntity.ENTITY_RENDERSET, 1, renderSet1, null, 0, 0);
         entity1.physProperties.setBoundingBox(0, 0, 20, 20);
-        entity1.physProperties.setPhysicsProperties(2, 0.01f, 0.1f);
-
+        entity1.physProperties.setPhysicsProperties(1, 0.01f, 0.1f);
         
         /* create entity handler and add entities */
         SKEntityHandler entityHandler = new SKEntityHandler( );
@@ -45,8 +44,9 @@ public class App {
         pHandler.addPhysObject(entity0);
         pHandler.addPhysObject(entity1);
         pHandler.updateInterval = 10;
-        pHandler.debugMode = true;
+        //pHandler.debugMode = true;
 
+        pHandler.setPgroupThreshold(800, 800);
 
         /* main render loop */
         while(true)

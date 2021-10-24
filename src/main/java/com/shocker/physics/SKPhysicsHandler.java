@@ -33,9 +33,9 @@
      public boolean debugMode = false;
      
      /* buffer size defs */
-     public static final int MAXPOBJS   = 0x80;
-     public static final int MAXPGROUPS = 0x30;
-     public static final int MAXPGSIZE  = 0x40;
+     public static final int MAXPOBJS   = 0xff;
+     public static final int MAXPGROUPS = 0x40;
+     public static final int MAXPGSIZE  = 0x50;
 
      /* time defs */
      public static final int DEFAULTPHYSINTERVAL = 7;
@@ -49,16 +49,16 @@
      private long missedUpdates = 0;
 
      /* buffers */
-     public boolean[] aVecUpdateBuff = new boolean[MAXPOBJS];    /* check if avec has been updated */
-     public boolean[] overlapBuffer  = new boolean[MAXPOBJS];    /* check if pobj is overlapping */
-     public SKEntity[] pObjBuffer    = new SKEntity[MAXPOBJS];   /* pobj array */
-     public SKFVector[] vecBuffer    = new SKFVector[MAXPOBJS];  /* a-vector array */
-     public SKFVector[] pushBuffer   = new SKFVector[MAXPOBJS];  /* opbj overlap push vector */
-     public SKPhysicsGroup[] pGroups = new SKPhysicsGroup[MAXPGROUPS];
+     private boolean[] aVecUpdateBuff = new boolean[MAXPOBJS];    /* check if avec has been updated */
+     private boolean[] overlapBuffer  = new boolean[MAXPOBJS];    /* check if pobj is overlapping */
+     private SKEntity[] pObjBuffer    = new SKEntity[MAXPOBJS];   /* pobj array */
+     private SKFVector[] vecBuffer    = new SKFVector[MAXPOBJS];  /* a-vector array */
+     private SKFVector[] pushBuffer   = new SKFVector[MAXPOBJS];  /* opbj overlap push vector */
+     private SKPhysicsGroup[] pGroups = new SKPhysicsGroup[MAXPGROUPS];
 
      /* pgroup bound threshold */
-     public static final int PGROUPTHRESHOLDX = 0x200;
-     public static final int PGROUPTHRESHOLDY = 0x200;
+     private static int PGROUPTHRESHOLDX = 0x200;
+     private static int PGROUPTHRESHOLDY = 0x200;
 
      /* internal physics group class */
     private final class SKPhysicsGroup
@@ -82,6 +82,20 @@
             pBuffIndexes[piSize] = indx;
             piSize++;
         }
+    }
+
+    /* ********************************************************
+    * METHOD: setPgroupThreshold
+    * PARAMS:
+    *  int ptx -> pgroup threshold x
+    *  int pty -> pgroup threshold y
+    * RETURNS:
+    *  void
+    * ********************************************************/
+    public void setPgroupThreshold(int ptx, int pty)
+    {
+        PGROUPTHRESHOLDX = ptx;
+        PGROUPTHRESHOLDY = pty;
     }
 
     /* ********************************************************
