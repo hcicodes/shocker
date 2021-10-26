@@ -45,13 +45,14 @@ public class App {
         pHandler.addPhysObject(entity1);
         pHandler.updateInterval = 5;
         //pHandler.debugMode = true;
+        pHandler.logUpdateInterval = true;
 
-        pHandler.setPgroupThreshold(800, 800);
+        //pHandler.setPgroupThreshold(64, 64);
 
         /* main render loop */
         while(true)
         {
-            window.cameraPosition = new SKFVector(entity0.position.x - 250, entity0.position.y - 250);
+            
             window.clearBuffer( );
 
             pHandler.debugDrawPgroupBounds(window);
@@ -70,6 +71,7 @@ public class App {
             }
 
             pHandler.physicsUpdate( );
+            window.cameraPosition = new SKFVector(entity0.position.x - 250, entity0.position.y - 250);
             entityHandler.render(window);
 
             if(SKFInput.isKeyDown('q'))

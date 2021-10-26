@@ -5,6 +5,7 @@
  *  2021-10-20
  *  2021-10-23
  *  2021-10-24
+ *  2021-10-26
  * DEVS:
  *  Bailey Jia-Tao Brown
  * DESC:
@@ -29,8 +30,9 @@
 
  public final class SKPhysicsHandler
  {
-     /* debug flag */
+     /* debug flags */
      public boolean debugMode = false;
+     public boolean logUpdateInterval = false;
      
      /* buffer size defs */
      public static final int MAXPOBJS   = 0xff;
@@ -419,6 +421,17 @@
         int startY = -50 * PGROUPTHRESHOLDY;
         int endY   =  50 * PGROUPTHRESHOLDY;
 
+        /* draw all used pgroups */
+        for(int i = 0; i < MAXPGROUPS; i++)
+        {
+            if(pGroups[i] != null)
+            {
+                int px = pGroups[i].gX * PGROUPTHRESHOLDX;
+                int py = pGroups[i].gY * PGROUPTHRESHOLDY;
+                target.drawRect(px, py, PGROUPTHRESHOLDX, PGROUPTHRESHOLDY, new Color(255, 0, 128, 200));
+            }
+        }
+
         /* draw horizontal lines */
         for(int i = -50; i < 50; i++)
         {
@@ -467,6 +480,19 @@
             /* if missed update and debug mode */
             if(System.currentTimeMillis( ) > lastUpdateTime + updateInterval)
             {
+                /* log update difference */
+                if(logUpdateInterval)
+                {
+                    long timePassed = System.currentTimeMillis( ) - lastUpdateTime;
+                    System.out.printf("Time passed since last update: %d ms ", timePassed);
+                    long timeMissed = timePassed - updateInterval;
+                    for(int i = 0; i < timeMissed; i++)
+                    {
+                        System.out.printf("=");
+                    }
+                    System.out.printf("\n");
+                }
+
                 long timeDiff = System.currentTimeMillis( ) - lastUpdateTime + updateInterval;
                 long tMissed = timeDiff / updateInterval;
 
