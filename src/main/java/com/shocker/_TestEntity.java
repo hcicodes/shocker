@@ -14,7 +14,7 @@ import com.shocker.entity.*;
 
 public class _TestEntity extends SKEntity
     {
-        public void update()
+        public void update(long time)
         {
             
         }
